@@ -1,14 +1,11 @@
 package com.stylefeng.guns.rest.modular.auth.controller;
 
-import com.alibaba.dubbo.config.annotation.Reference;
-import com.stylefeng.guns.api.user.UserAPI;
 import com.stylefeng.guns.core.exception.GunsException;
 import com.stylefeng.guns.rest.common.exception.BizExceptionEnum;
 import com.stylefeng.guns.rest.modular.auth.controller.dto.AuthRequest;
 import com.stylefeng.guns.rest.modular.auth.controller.dto.AuthResponse;
 import com.stylefeng.guns.rest.modular.auth.util.JwtTokenUtil;
 import com.stylefeng.guns.rest.modular.auth.validator.IReqValidator;
-import com.stylefeng.guns.rest.modular.vo.ResponseVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -31,30 +28,17 @@ public class AuthController {
     @Resource(name = "simpleValidator")
     private IReqValidator reqValidator;
 
-    @Reference(interfaceClass = UserAPI.class)
-    private UserAPI userAPI;
-
     @RequestMapping(value = "${jwt.auth-path}")
-    public ResponseVO createAuthenticationToken(AuthRequest authRequest) {
+    public ResponseEntity<?> createAuthenticationToken(AuthRequest authRequest) {
 
-
-//        boolean validate = reqValidator.validate(authRequest);
-        boolean validate=true;
-        //去掉guns自身携带的用户名密码验证机制,使用我们自己的
-        int userId=3;//userAPI.login(authRequest.getUserName(),authRequest.getPassword());
-        if (userId==0){
-            validate=false;
-        }
-
+        boolean validate = reqValidator.validate(authRequest);
 
         if (validate) {
             final String randomKey = jwtTokenUtil.getRandomKey();
-//            final String token = jwtTokenUtil.generateToken(authRequest.getUserName(), randomKey);
-            final String token = jwtTokenUtil.generateToken(""+userId, randomKey);
-//            return ResponseEntity.ok(new AuthResponse(token, randomKey));
-            return ResponseVO.success(new AuthResponse(token, randomKey));
+            final String token = jwtTokenUtil.generateToken(authRequest.getUserName(), randomKey);
+            return ResponseEntity.ok(new AuthResponse(token, randomKey));
         } else {
-            return ResponseVO.serviceFail("用户名或密码错误");
+            throw new GunsException(BizExceptionEnum.AUTH_REQUEST_ERROR);
         }
     }
 }

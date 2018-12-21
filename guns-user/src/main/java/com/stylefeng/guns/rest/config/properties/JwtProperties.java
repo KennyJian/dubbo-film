@@ -25,8 +25,6 @@ public class JwtProperties {
 
     private String md5Key = "randomKey";
 
-    private String ignoreUrl="";
-
     public static String getJwtPrefix() {
         return JWT_PREFIX;
     }
@@ -69,13 +67,5 @@ public class JwtProperties {
 
     public void setMd5Key(String md5Key) {
         this.md5Key = md5Key;
-    }
-
-    public String getIgnoreUrl() {
-        return ignoreUrl;
-    }
-
-    public void setIgnoreUrl(String ignoreUrl) {
-        this.ignoreUrl = ignoreUrl;
     }
 }
