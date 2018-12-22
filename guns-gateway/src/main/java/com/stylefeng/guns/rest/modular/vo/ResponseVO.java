@@ -13,6 +13,13 @@ public class ResponseVO<M> {
 
     private ResponseVO(){}
 
+    public static <M> ResponseVO success(String msg){
+        ResponseVO responseVO=new ResponseVO();
+        responseVO.setStatus(ResponseEnum.SUCCESS.getCode());
+        responseVO.setMsg(msg);
+        return responseVO;
+    }
+
     public static <M> ResponseVO success(M m){
         ResponseVO responseVO=new ResponseVO();
         responseVO.setStatus(ResponseEnum.SUCCESS.getCode());
