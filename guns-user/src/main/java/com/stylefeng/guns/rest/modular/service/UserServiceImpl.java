@@ -1,10 +1,10 @@
-package com.stylefeng.guns.rest.modular.user;
+package com.stylefeng.guns.rest.modular.service;
 
 import com.alibaba.dubbo.config.annotation.Service;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.stylefeng.guns.api.user.UserAPI;
-import com.stylefeng.guns.api.user.UserInfoModel;
-import com.stylefeng.guns.api.user.UserModel;
+import com.stylefeng.guns.api.user.vo.UserInfoModel;
+import com.stylefeng.guns.api.user.vo.UserModel;
 import com.stylefeng.guns.core.util.MD5Util;
 import com.stylefeng.guns.rest.common.persistence.dao.KennyUserTMapper;
 import com.stylefeng.guns.rest.common.persistence.model.KennyUserT;
@@ -21,6 +21,7 @@ public class UserServiceImpl implements UserAPI {
 
     @Override
     public int login(String username, String password) {
+        //只完成了密码校验 还需维护登陆状态 TODO
         KennyUserT kennyUserT=new KennyUserT();
         kennyUserT.setUserName(username);
         KennyUserT result=kennyUserTMapper.selectOne(kennyUserT);
