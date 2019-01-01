@@ -1,22 +1,20 @@
 package com.stylefeng.guns.rest.modular.film;
 
 import com.alibaba.dubbo.config.annotation.Reference;
+import com.alibaba.dubbo.rpc.RpcContext;
+import com.stylefeng.guns.api.film.FilmAsyncServiceApi;
 import com.stylefeng.guns.api.film.FilmServiceApi;
-import com.stylefeng.guns.api.film.vo.CatVO;
-import com.stylefeng.guns.api.film.vo.FilmVO;
-import com.stylefeng.guns.api.film.vo.SourceVO;
-import com.stylefeng.guns.api.film.vo.YearVO;
+import com.stylefeng.guns.api.film.vo.*;
 import com.stylefeng.guns.rest.modular.film.vo.FilmConditionVO;
 import com.stylefeng.guns.rest.modular.film.vo.FilmIndexVO;
 import com.stylefeng.guns.rest.modular.film.vo.FilmRequestVO;
 import com.stylefeng.guns.rest.modular.vo.ResponseVO;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 
 @RestController
 @RequestMapping("/film/")
@@ -26,6 +24,9 @@ public class FilmController {
 
     @Reference(interfaceClass = FilmServiceApi.class)
     private FilmServiceApi filmServiceApi;
+
+    @Reference(interfaceClass = FilmAsyncServiceApi.class,async = true)
+    private FilmAsyncServiceApi filmAsyncServiceApi;
 
     //获取首页信息接口
     @RequestMapping(value = "getIndex",method = RequestMethod.GET)
@@ -168,6 +169,50 @@ public class FilmController {
         return ResponseVO.success(filmVO.getNowPage(),filmVO.getTotalPage(),img_pre,filmVO.getFilmInfoList());
     }
 
+    @RequestMapping(value = "films/{searchParam}",method = RequestMethod.GET)
+    public ResponseVO films(@PathVariable("searchParam")String searchParam,int searchType) throws ExecutionException, InterruptedException {
 
+        //根据searchType,判断查询类型
+        FilmDetailVO filmDetail=filmServiceApi.getFilmDetail(searchType,searchParam);
+        if(filmDetail==null){
+            return ResponseVO.serviceFail("没有可查询的影片");
+        }else if(filmDetail.getFilmId()==null||filmDetail.getFilmId().trim().length()==0){
+            return ResponseVO.serviceFail("没有可查询的影片");
+        }
+        String filmId=filmDetail.getFilmId();
+        //查询影片的详细信息->Dubbo的异步获取
+        //获取影片描述信息
+//        FilmDescVO filmDescVO=filmAsyncServiceApi.getFilmDesc(filmId);
+        filmAsyncServiceApi.getFilmDesc(filmId);
+        Future<FilmDescVO> filmDescVOFuture= RpcContext.getContext().getFuture();
+        //获取图片信息
+//        ImgVO imgVO=filmAsyncServiceApi.getImgs(filmId);
+        filmAsyncServiceApi.getImgs(filmId);
+        Future<ImgVO> imgVOFuture= RpcContext.getContext().getFuture();
+        //获取导演信息
+//        ActorVO directorVO=filmAsyncServiceApi.getDectInfo(filmId);
+        filmAsyncServiceApi.getDectInfo(filmId);
+        Future<ActorVO> actorVOFuture= RpcContext.getContext().getFuture();
+        //获取演员信息
+//        List<ActorVO> actors=filmAsyncServiceApi.getActors(filmId);
+        filmAsyncServiceApi.getActors(filmId);
+        Future<List<ActorVO>> actorsVOFutrue= RpcContext.getContext().getFuture();
+
+        InfoRequestVO infoRequestVO=new InfoRequestVO();
+        //组织Actor属性
+        ActorRequestVO actorRequestVO=new ActorRequestVO();
+        actorRequestVO.setActors(actorsVOFutrue.get());
+        actorRequestVO.setDirector(actorVOFuture.get());
+
+        //组织Info对象
+        infoRequestVO.setActors(actorRequestVO);
+        infoRequestVO.setBiography(filmDescVOFuture.get().getBiography());
+        infoRequestVO.setFilmId(filmId);
+        infoRequestVO.setImgVO(imgVOFuture.get());
+
+        //组织成返回值
+        filmDetail.setInfo04(infoRequestVO);
+        return ResponseVO.success("http://img.meetingshop.cn/",filmDetail);
+    }
 
 }

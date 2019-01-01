@@ -34,6 +34,12 @@ public class DefaultFilmServiceImpl implements FilmServiceApi {
     @Autowired
     private KennyYearDictTMapper kennyYearDictTMapper;
 
+    @Autowired
+    private KennyFilmInfoTMapper kennyFilmInfoTMapper;
+
+    @Autowired
+    private KennyActorTMapper kennyActorTMapper;
+
     @Override
     public List<BannerVO> getBanners() {
         List<KennyBannerT> kennyBannerTList=kennyBannerTMapper.selectList(null);
@@ -303,5 +309,67 @@ public class DefaultFilmServiceImpl implements FilmServiceApi {
             yearVOList.add(yearVO);
         }
         return yearVOList;
+    }
+
+    @Override
+    public FilmDetailVO getFilmDetail(int searchType, String searchParam) {
+        FilmDetailVO filmDetailVO=null;
+        //searchType 1-按名称 2按ID查找
+        if (searchType==1){
+            filmDetailVO=kennyFilmTMapper.getFilmDetailByName("%"+searchParam+"%");
+        }else {
+            filmDetailVO=kennyFilmTMapper.getFilmDetailById(searchParam);
+        }
+        return filmDetailVO;
+    }
+
+    private KennyFilmInfoT getFilmInfo(String filmId){
+        KennyFilmInfoT kennyFilmInfoT=new KennyFilmInfoT();
+        kennyFilmInfoT.setFilmId(filmId);
+        kennyFilmInfoT=kennyFilmInfoTMapper.selectOne(kennyFilmInfoT);
+        return kennyFilmInfoT;
+    }
+
+    @Override
+    public FilmDescVO getFilmDesc(String filmId) {
+        KennyFilmInfoT kennyFilmInfoT=getFilmInfo(filmId);
+        FilmDescVO filmDescVO=new FilmDescVO();
+        filmDescVO.setBiography(kennyFilmInfoT.getBiography());
+        filmDescVO.setFilmId(filmId);
+        return filmDescVO;
+    }
+
+    @Override
+    public ImgVO getImgs(String filmId) {
+        KennyFilmInfoT kennyFilmInfoT=getFilmInfo(filmId);
+        //图片地址施五个以逗号为分割的链接URL
+        String filmImgStr=kennyFilmInfoT.getFilmImgs();
+        String[] filmImgs=filmImgStr.split(",");
+        ImgVO imgVO=new ImgVO();
+        imgVO.setMainImg(filmImgs[0]);
+        imgVO.setImg01(filmImgs[1]);
+        imgVO.setImg02(filmImgs[2]);
+        imgVO.setImg03(filmImgs[3]);
+        imgVO.setImg04(filmImgs[4]);
+
+        return imgVO;
+    }
+
+    @Override
+    public ActorVO getDectInfo(String filmId) {
+        KennyFilmInfoT kennyFilmInfoT=getFilmInfo(filmId);
+        //获取导演编号
+        Integer directId=kennyFilmInfoT.getDirectorId();
+        KennyActorT kennyActorT=kennyActorTMapper.selectById(directId);
+        ActorVO actorVO=new ActorVO();
+        actorVO.setImgAddress(kennyActorT.getActorImg());
+        actorVO.setDirectorName(kennyActorT.getActorName());
+        return actorVO;
+    }
+
+    @Override
+    public List<ActorVO> getActors(String filmId) {
+        List<ActorVO> actors=kennyActorTMapper.getActors(filmId);
+        return actors;
     }
 }
