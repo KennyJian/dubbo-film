@@ -24,4 +24,8 @@ public interface CinemaServiceApi {
     //8.根据放映场次查询播放的电影编号,然后根据电影编号获取对应的电影信息
     FilmInfoVO getFilmInfoByFieldId(int fieldId);
 
+    //根据FieldId找到对应的座位位置图 目前该接口暂时是供订单服务调用
+    String getSeatsByFieldId(String fieldId);
+    //目前该接口暂时是供订单服务调用
+    OrderQueryVO getOrderNeeds(int fieldId);
 }
