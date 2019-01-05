@@ -35,7 +35,7 @@ import java.util.List;
 
 @Slf4j
 @Component
-@Service(interfaceClass = AliPayServiceAPI.class)
+@Service(interfaceClass = AliPayServiceAPI.class,mock = "com.stylefeng.guns.api.alipay.AlipayServiceMock")
 public class DefaultAlipayServiceImpl implements AliPayServiceAPI {
 
     @Reference(interfaceClass = OrderServiceApi.class)
