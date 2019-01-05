@@ -16,4 +16,11 @@ public interface OrderServiceApi {
     Page<OrderVO> getOrderByUserId(Integer userId, Page<OrderVO> page);
     //根据FieldId,获取所有已经销售的座位编号
     String getSoldSeatsByFieldId(Integer fieldId);
+
+    //根据订单编号获取订单信息
+    OrderVO getOrderInfoById(String orderId);
+
+    boolean paySuccess(String orderId);
+
+    boolean payFail(String orderId);
 }

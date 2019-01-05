@@ -30,7 +30,7 @@ public class ResponseVO<M> {
     public static <M> ResponseVO success(String imgPre,M m){
         ResponseVO responseVO=new ResponseVO();
         responseVO.setStatus(ResponseEnum.SUCCESS.getCode());
-        responseVO.setMsg(ResponseEnum.SUCCESS.getMsg());
+        responseVO.setMsg("");
         responseVO.setData(m);
         responseVO.setImgPre(imgPre);
         return responseVO;
@@ -49,7 +49,7 @@ public class ResponseVO<M> {
     public static <M> ResponseVO success(M m){
         ResponseVO responseVO=new ResponseVO();
         responseVO.setStatus(ResponseEnum.SUCCESS.getCode());
-        responseVO.setMsg(ResponseEnum.SUCCESS.getMsg());
+        responseVO.setMsg("");
         responseVO.setData(m);
         return responseVO;
     }
