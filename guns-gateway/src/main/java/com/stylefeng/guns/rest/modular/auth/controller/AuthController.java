@@ -9,9 +9,13 @@ import com.stylefeng.guns.rest.modular.auth.controller.dto.AuthResponse;
 import com.stylefeng.guns.rest.modular.auth.util.JwtTokenUtil;
 import com.stylefeng.guns.rest.modular.auth.validator.IReqValidator;
 import com.stylefeng.guns.rest.modular.vo.ResponseVO;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
@@ -34,7 +38,13 @@ public class AuthController {
     @Reference(interfaceClass = UserAPI.class)
     private UserAPI userAPI;
 
-    @RequestMapping(value = "${jwt.auth-path}")
+
+    @ApiOperation(value = "用户登录",notes="根据账号密码进行登陆")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "userName", value = "用户登录账号", required = true, dataType = "String"),
+            @ApiImplicitParam(name = "password", value = "用户登录密码", required = true, dataType = "String")
+    })
+    @RequestMapping(value = "${jwt.auth-path}",method = RequestMethod.POST)
     public ResponseVO createAuthenticationToken(AuthRequest authRequest) {
 
 

@@ -29,7 +29,7 @@ mybatis-plus:
 
 spring:
   application:
-    name: Meeting-gateway
+    name: gateway
   dubbo:
     server: true
     registry: zookeeper://localhost:2181
@@ -44,4 +44,4 @@ logging:
   level.root: info
   level.com.stylefeng: debug
   path: logs/
-  file: guns-rest.log
+  file: guns-gateway.log

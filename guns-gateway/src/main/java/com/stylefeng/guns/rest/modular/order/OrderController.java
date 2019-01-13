@@ -1,6 +1,7 @@
 package com.stylefeng.guns.rest.modular.order;
 
 import com.alibaba.dubbo.config.annotation.Reference;
+import com.alibaba.dubbo.rpc.RpcContext;
 import com.baomidou.mybatisplus.plugins.Page;
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixProperty;
@@ -120,11 +121,15 @@ public class OrderController {
     }
 
     @RequestMapping(value = "getPayResult",method = RequestMethod.POST)
-    public ResponseVO getPayResult(@RequestParam("orderId") String orderId,@RequestParam(value = "tryNums",required = false,defaultValue = "1") Integer tryNums){
+    public ResponseVO getPayResult(@RequestParam("orderId") String orderId,
+                                   @RequestParam(value = "tryNums",required = false,defaultValue = "1") Integer tryNums){
         String userId= CurrentUser.getCurrentUser();
         if (userId==null||userId.trim().length()==0) {
             return ResponseVO.serviceFail("抱歉,用户未登陆");
         }
+        //将当前登陆人的信息传递给后端
+        RpcContext.getContext().setAttachment("userId",userId);
+
         //判断是否支付超时
         if (tryNums>=4){
             return ResponseVO.serviceFail("订单支付失败,请稍后重试");

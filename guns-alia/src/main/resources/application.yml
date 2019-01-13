@@ -9,12 +9,6 @@ jwt:
   auth-path: auth         #认证请求的路径
   md5-key: randomKey      #md5加密混淆key
 
-ftp:
-  host-name: 10.131.137.177
-  port: 2100
-  user-name: ftp
-  password: ksws0123
-  upload-path: /qrcode
 server:
   port: 8085 #项目端口
 
@@ -34,7 +28,7 @@ mybatis-plus:
 
 spring:
   application:
-    name: Meeting-film
+    name: alipay
   dubbo:
     server: true
     registry: zookeeper://localhost:2181
@@ -46,7 +40,8 @@ spring:
       username: root
       password: 3DSmart
       filters: log4j,wall,mergeStat
-
+  profiles:
+    active: windows
 
 logging:
   level.root: info

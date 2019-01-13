@@ -2,6 +2,7 @@ package com.stylefeng.guns.rest.modular.service;
 
 import com.alibaba.dubbo.config.annotation.Reference;
 import com.alibaba.dubbo.config.annotation.Service;
+import com.alibaba.dubbo.rpc.RpcContext;
 import com.alipay.api.domain.TradeFundBill;
 import com.alipay.api.response.AlipayTradePrecreateResponse;
 import com.alipay.api.response.AlipayTradeQueryResponse;
@@ -88,6 +89,9 @@ public class DefaultAlipayServiceImpl implements AliPayServiceAPI {
 
     @Override
     public AliPayResultVO getOrderStatus(String orderId) {
+        //看看是否有当前登陆人
+        String userId= RpcContext.getContext().getAttachment("userId");
+        log.info("DefaultAlipayServiceImpl - getPrderStatus-userId="+userId);
         //获取订单支付状态
         boolean isSuccess=trade_query(orderId);
         if(isSuccess){
@@ -167,8 +171,10 @@ public class DefaultAlipayServiceImpl implements AliPayServiceAPI {
 
                 AlipayTradePrecreateResponse response = result.getResponse();
 
-                // 需要修改为运行机器上的路径
-                filePath = String.format("E:/code/毕设/qrcode/qr-%s.png",
+                // 需要修改为运行机器上的路径  windows和linux
+//                filePath = String.format("E:/code/毕设/qrcode/qr-%s.png",
+//                        response.getOutTradeNo());
+                filePath = String.format("/var/ftp/pub/temp/qr-%s.png",
                         response.getOutTradeNo());
                 String fileName=String.format("qr-%s.png",response.getOutTradeNo());
                 log.info("filePath:" + filePath);

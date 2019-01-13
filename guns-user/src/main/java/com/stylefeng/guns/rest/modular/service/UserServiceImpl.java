@@ -3,6 +3,7 @@ package com.stylefeng.guns.rest.modular.service;
 import com.alibaba.dubbo.config.annotation.Service;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.stylefeng.guns.api.user.UserAPI;
+import com.stylefeng.guns.api.user.vo.RegisterVO;
 import com.stylefeng.guns.api.user.vo.UserInfoModel;
 import com.stylefeng.guns.api.user.vo.UserModel;
 import com.stylefeng.guns.core.util.MD5Util;
@@ -35,18 +36,18 @@ public class UserServiceImpl implements UserAPI {
     }
 
     @Override
-    public boolean register(UserModel userModel) {
+    public boolean register(RegisterVO registerVO) {
 
         //判断该用户是否被注册过
-        if(!checkUserName(userModel.getUserName())){
+        if(!checkUserName(registerVO.getUserName())){
             return false;
         }
         //将注册信息实体转换为数据实体
         KennyUserT kennyUserT=new KennyUserT();
-        BeanUtils.copyProperties(userModel,kennyUserT);
+        BeanUtils.copyProperties(registerVO,kennyUserT);
 
         //数据加密
-        String md5Password= MD5Util.encrypt(userModel.getUserPwd());
+        String md5Password= MD5Util.encrypt(registerVO.getUserPwd());
         kennyUserT.setUserPwd(md5Password);
         //将数据实体存入数据库
         Integer insertCount=kennyUserTMapper.insert(kennyUserT);
@@ -76,8 +77,9 @@ public class UserServiceImpl implements UserAPI {
     }
 
     @Override
-    public UserInfoModel updateUserInfo(UserInfoModel userInfoModel) {
+    public UserInfoModel updateUserInfo(UserInfoModel userInfoModel,int userId) {
         KennyUserT kennyUserT=new KennyUserT();
+        kennyUserT.setUuid(userId);
         BeanUtils.copyProperties(userInfoModel,kennyUserT);
         Integer resultCount=kennyUserTMapper.updateById(kennyUserT);
         if(resultCount>0){

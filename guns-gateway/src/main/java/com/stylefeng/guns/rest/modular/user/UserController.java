@@ -2,13 +2,20 @@ package com.stylefeng.guns.rest.modular.user;
 
 import com.alibaba.dubbo.config.annotation.Reference;
 import com.stylefeng.guns.api.user.UserAPI;
+import com.stylefeng.guns.api.user.vo.RegisterVO;
 import com.stylefeng.guns.api.user.vo.UserInfoModel;
 import com.stylefeng.guns.api.user.vo.UserModel;
 import com.stylefeng.guns.rest.common.CurrentUser;
 import com.stylefeng.guns.rest.modular.vo.ResponseVO;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+
+import javax.validation.Valid;
 
 @RequestMapping("/user/")
 @RestController
@@ -17,21 +24,26 @@ public class UserController {
     @Reference(interfaceClass = UserAPI.class)
     private UserAPI userAPI;
 
-    @RequestMapping("register")
-    public ResponseVO register(UserModel userModel){
-        if(userModel.getUserName()==null||userModel.getUserName().trim().length()==0){
-            return ResponseVO.serviceFail("用户名不能为空");
-        }
-        if(userModel.getUserPwd()==null||userModel.getUserPwd().trim().length()==0){
-            return ResponseVO.serviceFail("密码不能为空");
-        }
-        boolean isSuccess=userAPI.register(userModel);
-        if (isSuccess){
-            return ResponseVO.success("注册成功");
+    @ApiOperation(value = "用户注册")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "userName", value = "用户注册账号", required = true, dataType = "String"),
+            @ApiImplicitParam(name = "userPwd", value = "用户注册密码", required = true, dataType = "String")
+    })
+    @RequestMapping(value = "register",method = RequestMethod.POST)
+    public ResponseVO register(@Valid RegisterVO registerVO, BindingResult bindingResult){
+        if(bindingResult.hasErrors()){
+            return ResponseVO.serviceFail("用户名或密码不能为空");
+        }else {
+            boolean isSuccess = userAPI.register(registerVO);
+            if (isSuccess) {
+                return ResponseVO.success("注册成功");
+            }
         }
         return ResponseVO.serviceFail("注册失败");
     }
 
+    @ApiOperation(value = "查询用户是否存在")
+    @ApiImplicitParam(name = "username", value = "用户名", required = true, dataType = "String")
     @RequestMapping(value = "check",method = RequestMethod.POST)
     public ResponseVO check(String username){
         if(username!=null&&username.trim().length()>0){
@@ -46,7 +58,8 @@ public class UserController {
         return ResponseVO.serviceFail("用户名不能为空");
     }
 
-    @RequestMapping(value = "logout",method = RequestMethod.GET)
+    @ApiOperation(value = "用户登出")
+    @RequestMapping(value = "logout",method = RequestMethod.POST)
     public ResponseVO logout(String username){
         /**
          * 应用:
@@ -63,6 +76,7 @@ public class UserController {
     }
 
 
+    @ApiOperation(value = "获取个人信息")
     @RequestMapping(value = "getUserInfo",method = RequestMethod.GET)
     public ResponseVO getUserInfo(){
         //获取当前登陆用户
@@ -81,25 +95,35 @@ public class UserController {
         }
     }
 
+    @ApiOperation(value = "修改个人信息")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "nickName", value = "用户别名", required = false, dataType = "String"),
+            @ApiImplicitParam(name = "email", value = "电子邮箱", required = false, dataType = "String"),
+            @ApiImplicitParam(name = "userPhone", value = "手机号", required = false, dataType = "String"),
+            @ApiImplicitParam(name = "userSex", value = "性别", required = false, dataType = "Integer"),
+            @ApiImplicitParam(name = "birthday", value = "生日", required = false, dataType = "String"),
+            @ApiImplicitParam(name = "lifeState", value = "婚姻状态", required = false, dataType = "Integer"),
+            @ApiImplicitParam(name = "biography", value = "个人简介", required = false, dataType = "String")
+    })
     @RequestMapping(value = "updateUserInfo",method = RequestMethod.POST)
-    public ResponseVO updateUserInfo(UserInfoModel userInfoModel){
-        //获取当前登陆用户
-        String userId= CurrentUser.getCurrentUser();
-        if (userId!=null&&userId.trim().length()>0){
-            //将用户ID传入后端进行查询
-            int uuid=Integer.parseInt(userId);
-            //判断当前登陆人员的ID与修改的结果ID是否一致
-            if(uuid!=userInfoModel.getUuid()){
-                return ResponseVO.serviceFail("请修改您个人信息");
-            }
-            UserInfoModel userInfo=userAPI.updateUserInfo(userInfoModel);
-            if (userInfo!=null){
-                return ResponseVO.success(userInfo);
-            }else {
-                return ResponseVO.appFail("用户信息修改失败");
-            }
+    public ResponseVO updateUserInfo(@Valid UserInfoModel userInfoModel, BindingResult bindingResult){
+        if(bindingResult.hasErrors()){
+            return ResponseVO.serviceFail("信息格式不正确");
         }else {
-            return ResponseVO.serviceFail("用户未登陆");
+            //获取当前登陆用户
+            String userId = CurrentUser.getCurrentUser();
+            if (userId != null && userId.trim().length() > 0) {
+                //将用户ID传入后端进行查询
+                int uuid = Integer.parseInt(userId);
+                UserInfoModel userInfo = userAPI.updateUserInfo(userInfoModel,uuid);
+                if (userInfo != null) {
+                    return ResponseVO.success(userInfo);
+                } else {
+                    return ResponseVO.appFail("用户信息修改失败");
+                }
+            } else {
+                return ResponseVO.serviceFail("用户未登陆");
+            }
         }
     }
 }

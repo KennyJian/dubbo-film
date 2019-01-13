@@ -55,6 +55,7 @@
             <artifactId>zkclient</artifactId>
             <version>0.11</version>
         </dependency>
+
     </dependencies>
 
     <build>
