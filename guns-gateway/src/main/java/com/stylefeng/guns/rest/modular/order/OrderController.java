@@ -27,7 +27,7 @@ public class OrderController {
 
     private static TokenBucket tokenBucket=new TokenBucket();
 
-    private static final String IMG_PRE="http://img.meetingshop.cn/";
+    private static final String IMG_PRE="http://www.chong10010.cn/";
 
     @Reference(interfaceClass = OrderServiceApi.class)
     private OrderServiceApi orderServiceApi;

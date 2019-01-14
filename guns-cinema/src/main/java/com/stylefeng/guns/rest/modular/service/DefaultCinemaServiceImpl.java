@@ -9,6 +9,7 @@ import com.stylefeng.guns.rest.common.persistence.dao.*;
 import com.stylefeng.guns.rest.common.persistence.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.ControllerAdvice;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -50,8 +51,8 @@ public class DefaultCinemaServiceImpl implements CinemaServiceApi {
         if(cinemaQueryVO.getDistrictId()!=99){
             entityWrapper.eq("area_id",cinemaQueryVO.getDistrictId());
         }
-        if(cinemaQueryVO.getHallType()!=99){ //%#3#%
-            entityWrapper.eq("hall_ids","%#+"+cinemaQueryVO.getHallType()+"+#%");
+        if(cinemaQueryVO.getHallType()!=99){ //#3#
+            entityWrapper.like("hall_ids","#"+cinemaQueryVO.getHallType()+"#");
         }
         //将数据实体转换为业务实体
         List<CinemaCinemaT> cinemaCinemaTS=cinemaCinemaTMapper.selectPage(page,entityWrapper);
@@ -68,6 +69,7 @@ public class DefaultCinemaServiceImpl implements CinemaServiceApi {
         //组织返回对象
         Page<CinemaVO> result=new Page<>();
         result.setRecords(cinemas);
+        result.setCurrent(cinemaQueryVO.getNowPage());
         result.setSize(cinemaQueryVO.getPagsSize());
         result.setTotal(counts);
         return result;

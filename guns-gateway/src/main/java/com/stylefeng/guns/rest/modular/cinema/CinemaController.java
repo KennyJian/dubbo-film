@@ -9,11 +9,17 @@ import com.stylefeng.guns.rest.modular.cinema.vo.CinemaConditionResponseVO;
 import com.stylefeng.guns.rest.modular.cinema.vo.CinemaFieldResponseVO;
 import com.stylefeng.guns.rest.modular.cinema.vo.CinemaFieldsResponseVO;
 import com.stylefeng.guns.rest.modular.vo.ResponseVO;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpRequest;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.context.support.HttpRequestHandlerServlet;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 @Slf4j
@@ -21,15 +27,24 @@ import java.util.List;
 @RequestMapping("/cinema/")
 public class CinemaController {
 
-    @Reference(interfaceClass = CinemaServiceApi.class,cache = "lru")
+//    @Reference(interfaceClass = CinemaServiceApi.class,cache = "lru") 添加缓存
+    @Reference(interfaceClass = CinemaServiceApi.class)
     private CinemaServiceApi cinemaServiceApi;
 
     @Reference(interfaceClass = OrderServiceApi.class)
     private OrderServiceApi orderServiceApi;
 
-    private static final String IMG_PRE="http://img.meetingshop.cn/";
+    private static final String IMG_PRE="http://www.chong10010.cn/";
 
-    @RequestMapping(value = "getCinemas")
+    @ApiOperation(value = "获取影城列表")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "brandId", value = "品牌Id", required = false, dataType = "Integer",defaultValue ="99"),
+            @ApiImplicitParam(name = "districtId", value = "区域", required = false, dataType = "Integer",defaultValue ="99"),
+            @ApiImplicitParam(name = "hallType", value = "影厅类型", required = false, dataType = "Integer",defaultValue ="99"),
+            @ApiImplicitParam(name = "pagsSize", value = "页面大小", required = false, dataType = "Integer",defaultValue ="12"),
+            @ApiImplicitParam(name = "nowPage", value = "当前页面", required = false, dataType = "Integer",defaultValue = "1")
+    })
+    @RequestMapping(value = "getCinemas",method = RequestMethod.GET)
     public ResponseVO getCinemas(CinemaQueryVO cinemaQueryVO){
         try {
             //按照五个条件进行筛选
@@ -52,7 +67,13 @@ public class CinemaController {
     /**
      * 1.热点数据->放缓存
      */
-    @RequestMapping(value = "getCondition")
+    @ApiOperation(value = "获取条件列表")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "brandId", value = "品牌Id", required = false, dataType = "Integer",defaultValue ="99"),
+            @ApiImplicitParam(name = "districtId", value = "区域", required = false, dataType = "Integer",defaultValue ="99"),
+            @ApiImplicitParam(name = "hallType", value = "影厅类型", required = false, dataType = "Integer",defaultValue ="99"),
+    })
+    @RequestMapping(value = "getCondition",method = RequestMethod.GET)
     public ResponseVO getCondition(CinemaQueryVO cinemaQueryVO){
         try {
             //获取三个集合 然后封装成一个对象 返回即可
@@ -73,7 +94,9 @@ public class CinemaController {
 
     }
 
-    @RequestMapping(value = "getFields")
+    @ApiOperation(value = "获取影院上映电影列表")
+    @ApiImplicitParam(name = "cinemaId", value = "影院Id", required = true, dataType = "Integer")
+    @RequestMapping(value = "getFields",method = RequestMethod.POST)
     public ResponseVO getFields(Integer cinemaId){
         try{
             CinemaInfoVO cinemaInfoVO=cinemaServiceApi.getCinemaInfoById(cinemaId);
@@ -89,11 +112,16 @@ public class CinemaController {
         }
     }
 
+    @ApiOperation(value = "获取场次信息,用于选座座位")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "cinemaId", value = "影院Id", required = true, dataType = "Integer"),
+            @ApiImplicitParam(name = "fieldId", value = "场次Id", required = true, dataType = "Integer")
+    })
     @RequestMapping(value = "getFieldInfo",method = RequestMethod.POST)
-    public ResponseVO getFieldInfo(Integer cinemaId,Integer fieldId){
+    public ResponseVO getFieldInfo(Integer cinemaId, Integer fieldId){
         try{
             CinemaInfoVO cinemaInfoById = cinemaServiceApi.getCinemaInfoById(cinemaId);
-            FilmInfoVO filmInfoByFieldId = cinemaServiceApi.getFilmInfoByFieldId(cinemaId);
+            FilmInfoVO filmInfoByFieldId = cinemaServiceApi.getFilmInfoByFieldId(fieldId);
             HallInfoVO filmFieldInfo = cinemaServiceApi.getFilmFieldInfo(fieldId);
 
             filmFieldInfo.setSoldSeats(orderServiceApi.getSoldSeatsByFieldId(fieldId));

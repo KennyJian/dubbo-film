@@ -20,7 +20,7 @@ import java.util.concurrent.Future;
 @RequestMapping("/film/")
 public class FilmController {
 
-    private static final String IMG_PRE="img.meetingshop.cn/";
+    private static final String IMG_PRE="chong10010.cn/";
 
     @Reference(interfaceClass = FilmServiceApi.class)
     private FilmServiceApi filmServiceApi;
@@ -143,7 +143,7 @@ public class FilmController {
 
     @RequestMapping(value = "getFilms",method = RequestMethod.GET)
     public ResponseVO getFilms(FilmRequestVO filmRequestVO){
-        String img_pre="http://img.meetingshop.cn/";
+        String img_pre="http://www.chong10010.cn/";
         FilmVO filmVO=null;
         //根据showType判断影片查询类型
         switch (filmRequestVO.getShowType()){
@@ -212,7 +212,7 @@ public class FilmController {
 
         //组织成返回值
         filmDetail.setInfo04(infoRequestVO);
-        return ResponseVO.success("http://img.meetingshop.cn/",filmDetail);
+        return ResponseVO.success("http://www.chong10010.cn/",filmDetail);
     }
 
 }

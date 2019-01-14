@@ -77,7 +77,7 @@ public class UserController {
 
 
     @ApiOperation(value = "获取个人信息")
-    @RequestMapping(value = "getUserInfo",method = RequestMethod.GET)
+    @RequestMapping(value = "getUserInfo",method = RequestMethod.POST)
     public ResponseVO getUserInfo(){
         //获取当前登陆用户
         String userId= CurrentUser.getCurrentUser();
