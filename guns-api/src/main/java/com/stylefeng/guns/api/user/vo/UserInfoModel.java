@@ -25,5 +25,6 @@ public class UserInfoModel implements Serializable {
     private Integer lifeState;
     @Size(max = 200)
     private String biography;
+    private String headUrl;
 
 }

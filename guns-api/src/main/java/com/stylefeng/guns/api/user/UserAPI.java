@@ -3,6 +3,7 @@ package com.stylefeng.guns.api.user;
 import com.stylefeng.guns.api.user.vo.RegisterVO;
 import com.stylefeng.guns.api.user.vo.UserInfoModel;
 import com.stylefeng.guns.api.user.vo.UserModel;
+import org.springframework.web.multipart.MultipartFile;
 
 public interface UserAPI {
 
@@ -15,4 +16,6 @@ public interface UserAPI {
     UserInfoModel getUserInfo(int uuid);
 
     UserInfoModel updateUserInfo(UserInfoModel userInfoModel,int userId);
+
+    boolean uploadHead(MultipartFile file,int userId);
 }

@@ -40,6 +40,10 @@ spring:
       username: root
       password: 3DSmart
       filters: log4j,wall,mergeStat
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 100MB
 
 
 logging:

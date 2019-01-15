@@ -13,9 +13,12 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
+import java.io.IOException;
 
 @RequestMapping("/user/")
 @RestController
@@ -126,4 +129,25 @@ public class UserController {
             }
         }
     }
+
+    @ApiOperation(value = "上传头像")
+    @ApiImplicitParam(name = "file", value = "文件", required = true, dataType = "MultipartFile")
+    @RequestMapping(value = "/upload",method = RequestMethod.POST)
+        public ResponseVO upload(@RequestParam("file") MultipartFile file) {
+        if (file.isEmpty()) {
+            return ResponseVO.serviceFail("上传失败，请选择文件");
+        }
+        String userId= CurrentUser.getCurrentUser();
+        if (userId != null && userId.trim().length() > 0) {
+            int uuid = Integer.parseInt(userId);
+            boolean isUploadSuccess = userAPI.uploadHead(file, uuid);
+            if (isUploadSuccess) {
+                return ResponseVO.success("上传成功");
+            }
+            return ResponseVO.serviceFail("上传失败");
+        } else {
+            return ResponseVO.serviceFail("用户未登陆");
+        }
+    }
+
 }

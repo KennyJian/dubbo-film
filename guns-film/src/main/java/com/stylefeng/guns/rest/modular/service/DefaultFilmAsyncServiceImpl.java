@@ -55,7 +55,6 @@ public class DefaultFilmAsyncServiceImpl implements FilmAsyncServiceApi {
         imgVO.setImg02(filmImgs[2]);
         imgVO.setImg03(filmImgs[3]);
         imgVO.setImg04(filmImgs[4]);
-
         return imgVO;
     }
 

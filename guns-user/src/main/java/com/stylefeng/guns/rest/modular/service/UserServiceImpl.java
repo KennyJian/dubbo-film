@@ -12,6 +12,10 @@ import com.stylefeng.guns.rest.common.persistence.model.KennyUserT;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.File;
+import java.io.IOException;
 
 @Component
 @Service(interfaceClass = UserAPI.class,loadbalance = "roundrobin")
@@ -86,5 +90,23 @@ public class UserServiceImpl implements UserAPI {
             return getUserInfo(kennyUserT.getUuid());
         }
         return userInfoModel;
+    }
+
+    @Override
+    public boolean uploadHead(MultipartFile file,int userId) {
+
+        String fileName = file.getOriginalFilename();
+        String filePath = "D:/ftp/head/";
+        File dest = new File(filePath + fileName);
+        try {
+            file.transferTo(dest);
+            KennyUserT kennyUserT=kennyUserTMapper.selectById(userId);
+            kennyUserT.setHeadUrl("/head/"+fileName);
+            kennyUserTMapper.updateById(kennyUserT);
+            return true;
+        } catch (IOException e) {
+
+        }
+        return false;
     }
 }

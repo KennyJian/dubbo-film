@@ -9,6 +9,9 @@ import com.stylefeng.guns.rest.modular.film.vo.FilmConditionVO;
 import com.stylefeng.guns.rest.modular.film.vo.FilmIndexVO;
 import com.stylefeng.guns.rest.modular.film.vo.FilmRequestVO;
 import com.stylefeng.guns.rest.modular.vo.ResponseVO;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -29,6 +32,7 @@ public class FilmController {
     private FilmAsyncServiceApi filmAsyncServiceApi;
 
     //获取首页信息接口
+    @ApiOperation(value = "获取首页信息")
     @RequestMapping(value = "getIndex",method = RequestMethod.GET)
     public ResponseVO getIndex(){
         FilmIndexVO filmIndexVO=new FilmIndexVO();
@@ -38,15 +42,21 @@ public class FilmController {
         filmIndexVO.setHotFilms(filmServiceApi.getHotFilms(true,8,1,1,99,99,99));
         //获取即将上映的电影
         filmIndexVO.setSoonFilms(filmServiceApi.getSoonFilms(true,8,1,1,99,99,99));
-        //票房排行榜
+        //票房排行榜 正在上映的 票房前10名
         filmIndexVO.setBoxRanking(filmServiceApi.getBoxRanking());
-        //获取受欢迎的榜单
+        //获取受欢迎的榜单 预售前10名
         filmIndexVO.setExpectRanking(filmServiceApi.getExpectRanking());
         //获取前一百
         filmIndexVO.setTop100(filmServiceApi.getTop());
         return ResponseVO.success(IMG_PRE,filmIndexVO);
     }
 
+    @ApiOperation(value = "获取电影条件列表")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "catId", value = "类型", required = false, dataType = "String",defaultValue = "99"),
+            @ApiImplicitParam(name = "sourceId", value = "区域", required = false, dataType = "String",defaultValue = "99"),
+            @ApiImplicitParam(name = "yearId", value = "年代", required = false, dataType = "String",defaultValue = "99")
+    })
     @RequestMapping(value = "getConditionList",method = RequestMethod.GET)
     public ResponseVO getConditionList(@RequestParam(value ="catId" ,required = false,defaultValue = "99")String catId,
                                        @RequestParam(value ="sourceId" ,required = false,defaultValue = "99")String sourceId,
@@ -141,6 +151,16 @@ public class FilmController {
         return ResponseVO.success(filmConditionVO);
     }
 
+    @ApiOperation(value = "获取电影列表")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "showType", value = "影片查询类型", required = false, dataType = "Integer",defaultValue = "1"),
+            @ApiImplicitParam(name = "sortId", value = "排序类型", required = false, dataType = "Integer",defaultValue = "1"),
+            @ApiImplicitParam(name = "sourceId", value = "片源Id", required = false, dataType = "Integer",defaultValue = "99"),
+            @ApiImplicitParam(name = "catId", value = "影片类型Id", required = false, dataType = "Integer",defaultValue = "99"),
+            @ApiImplicitParam(name = "yearId", value = "年代Id", required = false, dataType = "Integer",defaultValue = "99"),
+            @ApiImplicitParam(name = "nowPage", value = "当前页", required = false, dataType = "Integer",defaultValue = "1"),
+            @ApiImplicitParam(name = "pageSize", value = "页大小", required = false, dataType = "Integer",defaultValue = "18")
+    })
     @RequestMapping(value = "getFilms",method = RequestMethod.GET)
     public ResponseVO getFilms(FilmRequestVO filmRequestVO){
         String img_pre="http://www.chong10010.cn/";
@@ -169,6 +189,11 @@ public class FilmController {
         return ResponseVO.success(filmVO.getNowPage(),filmVO.getTotalPage(),img_pre,filmVO.getFilmInfoList());
     }
 
+    @ApiOperation(value = "根据电影Id或电影名查询电影详细信息")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "searchParam", value = "影片名称或Id", required = true, dataType = "String"),
+            @ApiImplicitParam(name = "searchType", value = "按名称或Id查询 1-按名称 2按ID查找", required = true, dataType = "int")
+    })
     @RequestMapping(value = "films/{searchParam}",method = RequestMethod.GET)
     public ResponseVO films(@PathVariable("searchParam")String searchParam,int searchType) throws ExecutionException, InterruptedException {
 
