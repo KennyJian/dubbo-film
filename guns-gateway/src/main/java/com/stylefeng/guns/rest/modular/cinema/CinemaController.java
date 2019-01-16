@@ -4,6 +4,7 @@ import com.alibaba.dubbo.config.annotation.Reference;
 import com.baomidou.mybatisplus.plugins.Page;
 import com.stylefeng.guns.api.cinema.CinemaServiceApi;
 import com.stylefeng.guns.api.cinema.vo.*;
+import com.stylefeng.guns.api.imgconst.ImgConst;
 import com.stylefeng.guns.api.order.OrderServiceApi;
 import com.stylefeng.guns.rest.modular.cinema.vo.CinemaConditionResponseVO;
 import com.stylefeng.guns.rest.modular.cinema.vo.CinemaFieldResponseVO;
@@ -105,7 +106,7 @@ public class CinemaController {
             CinemaFieldsResponseVO cinemaFieldsResponseVO =new CinemaFieldsResponseVO();
             cinemaFieldsResponseVO.setCinemaInfo(cinemaInfoVO);
             cinemaFieldsResponseVO.setFilmList(filmInfoVOS);
-            return ResponseVO.success(IMG_PRE, cinemaFieldsResponseVO);
+            return ResponseVO.success(ImgConst.IMGSRC, cinemaFieldsResponseVO);
         }catch (Exception e){
             log.error("获取播放场地失败",e);
             return ResponseVO.serviceFail("获取播放场地失败");
@@ -131,7 +132,7 @@ public class CinemaController {
             cinemaFieldResponseVO.setFilmInfo(filmInfoByFieldId);
             cinemaFieldResponseVO.setHallInfo(filmFieldInfo);
 
-            return ResponseVO.success(IMG_PRE,cinemaFieldResponseVO);
+            return ResponseVO.success(ImgConst.IMGSRC,cinemaFieldResponseVO);
         }catch (Exception e){
             log.error("获取选座信息失败",e);
             return ResponseVO.serviceFail("获取选座信息失败");

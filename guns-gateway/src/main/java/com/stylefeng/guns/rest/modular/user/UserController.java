@@ -1,6 +1,7 @@
 package com.stylefeng.guns.rest.modular.user;
 
 import com.alibaba.dubbo.config.annotation.Reference;
+import com.stylefeng.guns.api.imgconst.ImgConst;
 import com.stylefeng.guns.api.user.UserAPI;
 import com.stylefeng.guns.api.user.vo.RegisterVO;
 import com.stylefeng.guns.api.user.vo.UserInfoModel;
@@ -89,7 +90,7 @@ public class UserController {
             int uuid=Integer.parseInt(userId);
             UserInfoModel userInfo=userAPI.getUserInfo(uuid);
             if (userInfo!=null){
-                return ResponseVO.success(userInfo);
+                return ResponseVO.success(ImgConst.IMGSRC,userInfo);
             }else {
                 return ResponseVO.appFail("用户信息查询失败");
             }

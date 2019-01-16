@@ -109,6 +109,9 @@ public class DefaultAlipayServiceImpl implements AliPayServiceAPI {
         String filePath="";
 
         OrderVO orderVO=orderServiceApi.getOrderInfoById(orderId);
+        if(orderVO==null){
+            return null;
+        }
         // (必填) 商户网站订单系统中唯一订单号，64个字符以内，只能包含字母、数字、下划线，
         // 需保证商户系统端不能重复，建议通过数据库sequence生成，
         String outTradeNo = orderId;
@@ -172,10 +175,10 @@ public class DefaultAlipayServiceImpl implements AliPayServiceAPI {
                 AlipayTradePrecreateResponse response = result.getResponse();
 
                 // 需要修改为运行机器上的路径  windows和linux
-//                filePath = String.format("E:/code/毕设/qrcode/qr-%s.png",
-//                        response.getOutTradeNo());
-                filePath = String.format("/var/ftp/pub/temp/qr-%s.png",
+                filePath = String.format("E:/code/毕设/qrcode/qr-%s.png",
                         response.getOutTradeNo());
+//                filePath = String.format("/var/ftp/pub/temp/qr-%s.png",
+//                        response.getOutTradeNo());
                 String fileName=String.format("qr-%s.png",response.getOutTradeNo());
                 log.info("filePath:" + filePath);
                 File qrCodeImg=ZxingUtils.getQRCodeImge(response.getQrCode(), 256, filePath);
@@ -222,6 +225,7 @@ public class DefaultAlipayServiceImpl implements AliPayServiceAPI {
 
             case FAILED:
                 log.error("查询返回该订单支付失败或被关闭!!!");
+                orderServiceApi.payFail(orderId);
                 break;
 
             case UNKNOWN:

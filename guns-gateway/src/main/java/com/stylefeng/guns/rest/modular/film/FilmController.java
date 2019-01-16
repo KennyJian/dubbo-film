@@ -5,6 +5,7 @@ import com.alibaba.dubbo.rpc.RpcContext;
 import com.stylefeng.guns.api.film.FilmAsyncServiceApi;
 import com.stylefeng.guns.api.film.FilmServiceApi;
 import com.stylefeng.guns.api.film.vo.*;
+import com.stylefeng.guns.api.imgconst.ImgConst;
 import com.stylefeng.guns.rest.modular.film.vo.FilmConditionVO;
 import com.stylefeng.guns.rest.modular.film.vo.FilmIndexVO;
 import com.stylefeng.guns.rest.modular.film.vo.FilmRequestVO;
@@ -48,7 +49,7 @@ public class FilmController {
         filmIndexVO.setExpectRanking(filmServiceApi.getExpectRanking());
         //获取前一百
         filmIndexVO.setTop100(filmServiceApi.getTop());
-        return ResponseVO.success(IMG_PRE,filmIndexVO);
+        return ResponseVO.success(ImgConst.IMGSRC,filmIndexVO);
     }
 
     @ApiOperation(value = "获取电影条件列表")
@@ -237,7 +238,7 @@ public class FilmController {
 
         //组织成返回值
         filmDetail.setInfo04(infoRequestVO);
-        return ResponseVO.success("http://www.chong10010.cn/",filmDetail);
+        return ResponseVO.success(ImgConst.IMGSRC,filmDetail);
     }
 
 }

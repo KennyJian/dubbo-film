@@ -11,6 +11,7 @@ import com.stylefeng.guns.api.cinema.vo.OrderQueryVO;
 import com.stylefeng.guns.api.order.OrderServiceApi;
 import com.stylefeng.guns.api.order.vo.OrderVO;
 import com.stylefeng.guns.core.util.UUIDUtil;
+import com.stylefeng.guns.rest.common.orderenum.OrderStatusEnum;
 import com.stylefeng.guns.rest.common.persistence.dao.OrderOrderTMapper;
 import com.stylefeng.guns.rest.common.persistence.model.OrderOrderT;
 import com.stylefeng.guns.rest.common.util.FTPUtil;
@@ -132,6 +133,7 @@ public class DefaultOrderServiceImpl implements OrderServiceApi {
         if (insert>0){
             //返回查询结构
             OrderVO orderVO=orderOrderTMapper.getOrderInfoById(uuid);
+//            orderVO.setOrderStatus(OrderStatusEnum.getMsg(Integer.parseInt(orderVO.getOrderStatus())));
             if (orderVO==null || orderVO.getOrderId()==null){
                 log.error("订单信息查询失败,订单编号为{}",uuid);
                 return null;

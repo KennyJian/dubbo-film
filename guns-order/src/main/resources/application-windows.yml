@@ -1,5 +1,5 @@
 ftp:
-  host-name: 10.131.137.177
+  host-name: 10.131.247.68
   port: 2100
   user-name: ftp
   password: ksws0123

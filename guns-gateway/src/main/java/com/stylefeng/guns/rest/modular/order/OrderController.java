@@ -8,12 +8,16 @@ import com.netflix.hystrix.contrib.javanica.annotation.HystrixProperty;
 import com.stylefeng.guns.api.alipay.AliPayServiceAPI;
 import com.stylefeng.guns.api.alipay.vo.AliPayInfoVO;
 import com.stylefeng.guns.api.alipay.vo.AliPayResultVO;
+import com.stylefeng.guns.api.imgconst.ImgConst;
 import com.stylefeng.guns.api.order.OrderServiceApi;
 import com.stylefeng.guns.api.order.vo.OrderVO;
 import com.stylefeng.guns.core.util.TokenBucket;
 import com.stylefeng.guns.core.util.ToolUtil;
 import com.stylefeng.guns.rest.common.CurrentUser;
 import com.stylefeng.guns.rest.modular.vo.ResponseVO;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -59,6 +63,12 @@ public class OrderController {
                     @HystrixProperty(name="metrics.rollingStats.numBuckets",value="12"),
                     @HystrixProperty(name="metrics.rollingStats.timeInMilliseconds",value="1500")
     })
+    @ApiOperation(value = "购买电影票")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "fieldId", value = "影片名称或Id", required = true, dataType = "Integer"),
+            @ApiImplicitParam(name = "soldSeats", value = "座位id", required = true, dataType = "String"),
+            @ApiImplicitParam(name = "seatsName", value = "座位名字", required = true, dataType = "String")
+    })
     @RequestMapping(value = "buyTickets",method = RequestMethod.POST)
     public ResponseVO buyTickets(Integer fieldId,String soldSeats,String seatsName){
 
@@ -93,6 +103,12 @@ public class OrderController {
         }
     }
 
+
+    @ApiOperation(value = "获取订单列表")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "nowPage", value = "当前页", required = false, dataType = "Integer",defaultValue = "1"),
+            @ApiImplicitParam(name = "pageSize", value = "页大小", required = false, dataType = "Integer",defaultValue = "5")
+    })
     @RequestMapping(value = "getOrderInfo",method = RequestMethod.POST)
     public ResponseVO getOrderInfo(@RequestParam(value = "nowPage",required = false,defaultValue = "1")Integer nowPage,
                                    @RequestParam(value = "pageSize",required = false,defaultValue = "5")Integer pageSize){
@@ -109,6 +125,8 @@ public class OrderController {
         }
     }
 
+    @ApiOperation(value = "根据订单号生成支付二维码")
+    @ApiImplicitParam(name = "orderId", value = "订单号", required = true, dataType = "String")
     @RequestMapping(value = "getPayInfo",method = RequestMethod.POST)
     public ResponseVO getPayInfo(@RequestParam("orderId") String orderId){
         String userId= CurrentUser.getCurrentUser();
@@ -117,7 +135,10 @@ public class OrderController {
         }
         //订单二维码返回结果
         AliPayInfoVO aliPayInfoVO=aliPayServiceAPI.getQRCode(orderId);
-        return ResponseVO.success(IMG_PRE,aliPayInfoVO);
+        if (aliPayInfoVO==null){
+            return ResponseVO.serviceFail("查询失败,请检查订单编号是否有误");
+        }
+        return ResponseVO.success(ImgConst.IMGSRC,aliPayInfoVO);
     }
 
     @RequestMapping(value = "getPayResult",method = RequestMethod.POST)
