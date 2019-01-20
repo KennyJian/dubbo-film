@@ -1,8 +1,10 @@
 package com.stylefeng.guns.api.film.vo;
 
+import com.stylefeng.guns.api.comment.vo.CommentVO;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.util.List;
 
 @Data
 public class FilmDetailVO implements Serializable {
@@ -19,4 +21,5 @@ public class FilmDetailVO implements Serializable {
     private String info03;
     private InfoRequestVO info04;
 
+    private List<CommentVO> comments;
 }

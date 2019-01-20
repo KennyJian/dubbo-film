@@ -2,6 +2,8 @@ package com.stylefeng.guns.rest.modular.film;
 
 import com.alibaba.dubbo.config.annotation.Reference;
 import com.alibaba.dubbo.rpc.RpcContext;
+import com.stylefeng.guns.api.comment.CommentServiceApi;
+import com.stylefeng.guns.api.comment.vo.CommentVO;
 import com.stylefeng.guns.api.film.FilmAsyncServiceApi;
 import com.stylefeng.guns.api.film.FilmServiceApi;
 import com.stylefeng.guns.api.film.vo.*;
@@ -31,6 +33,9 @@ public class FilmController {
 
     @Reference(interfaceClass = FilmAsyncServiceApi.class,async = true)
     private FilmAsyncServiceApi filmAsyncServiceApi;
+
+    @Reference(interfaceClass = CommentServiceApi.class)
+    private CommentServiceApi commentServiceApi;
 
     //获取首页信息接口
     @ApiOperation(value = "获取首页信息")
@@ -164,7 +169,6 @@ public class FilmController {
     })
     @RequestMapping(value = "getFilms",method = RequestMethod.GET)
     public ResponseVO getFilms(FilmRequestVO filmRequestVO){
-        String img_pre="http://www.chong10010.cn/";
         FilmVO filmVO=null;
         //根据showType判断影片查询类型
         switch (filmRequestVO.getShowType()){
@@ -187,7 +191,7 @@ public class FilmController {
         //判断当前是第几页
 
 
-        return ResponseVO.success(filmVO.getNowPage(),filmVO.getTotalPage(),img_pre,filmVO.getFilmInfoList());
+        return ResponseVO.success(filmVO.getNowPage(),filmVO.getTotalPage(),ImgConst.IMGSRC,filmVO.getFilmInfoList());
     }
 
     @ApiOperation(value = "根据电影Id或电影名查询电影详细信息")
@@ -236,8 +240,13 @@ public class FilmController {
         infoRequestVO.setFilmId(filmId);
         infoRequestVO.setImgVO(imgVOFuture.get());
 
+        //组织评论
+        Integer filmeIdByInt=Integer.parseInt(filmId);
+        List<CommentVO> comment = commentServiceApi.getComment(filmeIdByInt);
+
         //组织成返回值
         filmDetail.setInfo04(infoRequestVO);
+        filmDetail.setComments(comment);
         return ResponseVO.success(ImgConst.IMGSRC,filmDetail);
     }
 

@@ -28,10 +28,12 @@ public class DefaultFilmAsyncServiceImpl implements FilmAsyncServiceApi {
 
 
     private KennyFilmInfoT getFilmInfo(String filmId){
-        KennyFilmInfoT kennyFilmInfoT=new KennyFilmInfoT();
-        kennyFilmInfoT.setFilmId(filmId);
-        kennyFilmInfoT=kennyFilmInfoTMapper.selectOne(kennyFilmInfoT);
-        return kennyFilmInfoT;
+//        kennyFilmInfoT.setFilmId(filmId);
+//        kennyFilmInfoT=kennyFilmInfoTMapper.selectOne(kennyFilmInfoT);
+        EntityWrapper<KennyFilmInfoT> kennyFilmInfoTEntityWrapper=new EntityWrapper<>();
+        kennyFilmInfoTEntityWrapper.eq("film_id",filmId);
+        List<KennyFilmInfoT> kennyFilmInfoT= kennyFilmInfoTMapper.selectList(kennyFilmInfoTEntityWrapper);
+        return kennyFilmInfoT.get(0);
     }
 
     @Override

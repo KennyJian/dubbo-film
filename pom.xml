@@ -20,6 +20,7 @@
         <module>guns-cinema</module>
         <module>guns-order</module>
         <module>guns-alia</module>
+        <module>guns-comment</module>
     </modules>
 
     <parent>
