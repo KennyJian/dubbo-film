@@ -244,9 +244,14 @@ public class FilmController {
         Integer filmeIdByInt=Integer.parseInt(filmId);
         List<CommentVO> comment = commentServiceApi.getComment(filmeIdByInt);
 
+        //组织推荐电影
+        filmAsyncServiceApi.getRecommends(filmId);
+        Future<List<RecommendVO>> recommendVOFuture= RpcContext.getContext().getFuture();
+
         //组织成返回值
         filmDetail.setInfo04(infoRequestVO);
         filmDetail.setComments(comment);
+        filmDetail.setRecommends(recommendVOFuture.get());
         return ResponseVO.success(ImgConst.IMGSRC,filmDetail);
     }
 

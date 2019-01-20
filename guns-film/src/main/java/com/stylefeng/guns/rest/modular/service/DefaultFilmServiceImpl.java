@@ -219,7 +219,7 @@ public class DefaultFilmServiceImpl implements FilmServiceApi {
         if (catId!=99){
             //#2#4#22
             String catStr="%#"+catId+"#%";
-            kennyFilmTEntityWrapper.like("film_source",catStr);
+            kennyFilmTEntityWrapper.like("film_cats",catStr);
         }
         List<KennyFilmT> kennyFilmTList=kennyFilmTMapper.selectPage(page,kennyFilmTEntityWrapper);
         filmInfos=getFilmInfos(kennyFilmTList);

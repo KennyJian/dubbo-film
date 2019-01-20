@@ -26,6 +26,9 @@ public class DefaultFilmAsyncServiceImpl implements FilmAsyncServiceApi {
     @Autowired
     private KennyActorTMapper kennyActorTMapper;
 
+    @Autowired
+    private KennyFilmTMapper kennyFilmTMapper;
+
 
     private KennyFilmInfoT getFilmInfo(String filmId){
 //        kennyFilmInfoT.setFilmId(filmId);
@@ -76,5 +79,27 @@ public class DefaultFilmAsyncServiceImpl implements FilmAsyncServiceApi {
     public List<ActorVO> getActors(String filmId) {
         List<ActorVO> actors=kennyActorTMapper.getActors(filmId);
         return actors;
+    }
+
+    @Override
+    public List<RecommendVO> getRecommends(String filmId) {
+        List<RecommendVO> recommendVOList=new ArrayList<>();
+        KennyFilmT kennyFilmT=kennyFilmTMapper.selectById(filmId);
+        String[] cats=kennyFilmT.getFilmCats().split("#");
+        Page<RecommendVO> page=new Page<>(1,6);
+        EntityWrapper<KennyFilmT> entityWrapper=new EntityWrapper<>();
+        for (int i=0;i<cats.length;i++){
+            if(i!=0){
+                entityWrapper.or();
+            }
+            entityWrapper.like("film_cats",cats[i]);
+        }
+        List<KennyFilmT> kennyFilmTList = kennyFilmTMapper.selectPage(page, entityWrapper);
+        for (KennyFilmT kennyFilmT1:kennyFilmTList){
+            RecommendVO recommendVO=new RecommendVO();
+            BeanUtils.copyProperties(kennyFilmT1,recommendVO);
+            recommendVOList.add(recommendVO);
+        }
+        return recommendVOList;
     }
 }

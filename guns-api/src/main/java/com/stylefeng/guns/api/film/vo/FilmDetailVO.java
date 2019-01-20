@@ -21,5 +21,10 @@ public class FilmDetailVO implements Serializable {
     private String info03;
     private InfoRequestVO info04;
 
+    //获取评论列表
     private List<CommentVO> comments;
+    //获取推荐列表
+    private List<RecommendVO> recommends;
+
+
 }

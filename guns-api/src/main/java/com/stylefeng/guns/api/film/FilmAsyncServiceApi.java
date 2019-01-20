@@ -17,4 +17,7 @@ public interface FilmAsyncServiceApi {
 
     //获取演员信息
     List<ActorVO> getActors(String filmId);
+
+    //获取推荐信息
+    List<RecommendVO> getRecommends(String filmId);
 }
