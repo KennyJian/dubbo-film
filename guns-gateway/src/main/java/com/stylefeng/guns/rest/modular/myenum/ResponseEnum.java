@@ -2,7 +2,7 @@ package com.stylefeng.guns.rest.modular.myenum;
 
 public enum ResponseEnum {
 
-    SUCCESS(0,"成功"),
+    SUCCESS(200,"成功"),
     BUSINESSFAILURE(1,"业务失败"),
     SYSTEMERRO(999,"系统异常");
 

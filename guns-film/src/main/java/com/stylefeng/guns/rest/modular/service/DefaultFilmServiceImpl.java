@@ -372,4 +372,10 @@ public class DefaultFilmServiceImpl implements FilmServiceApi {
         List<ActorVO> actors=kennyActorTMapper.getActors(filmId);
         return actors;
     }
+
+    @Override
+    public List<FilmSearchResultVO> getSearchResults(FilmSearchRequstVO filmSearchRequstVO) {
+        Page<FilmSearchResultVO> page=new Page<>(filmSearchRequstVO.getNowPage(),filmSearchRequstVO.getPageSize());
+        return kennyFilmTMapper.searchResult("%"+filmSearchRequstVO.getFilmName()+"%",page);
+    }
 }

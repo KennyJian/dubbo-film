@@ -255,4 +255,16 @@ public class FilmController {
         return ResponseVO.success(ImgConst.IMGSRC,filmDetail);
     }
 
+    @ApiOperation(value = "根据电影名搜索相关电影")
+    @ApiImplicitParams({
+       @ApiImplicitParam(name = "filmName", value = "查找电影名称", required = true, dataType = "String"),
+       @ApiImplicitParam(name = "nowPage", value = "当前页", required = false, dataType = "Integer",defaultValue = "1"),
+       @ApiImplicitParam(name = "pageSize", value = "页大小", required = false, dataType = "Integer",defaultValue = "18")
+    })
+    @RequestMapping(value = "searchFilm",method = RequestMethod.GET)
+    public ResponseVO getSearchResult(FilmSearchRequstVO filmSearchRequstVO){
+        List<FilmSearchResultVO> filmSearchResultVOS =filmServiceApi.getSearchResults(filmSearchRequstVO);
+        Integer totalPage=filmSearchResultVOS.size()/filmSearchRequstVO.getPageSize()+1;
+        return ResponseVO.success(filmSearchRequstVO.getNowPage(),totalPage,"",filmSearchResultVOS);
+    }
 }

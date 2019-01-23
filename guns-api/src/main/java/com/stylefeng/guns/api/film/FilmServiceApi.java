@@ -45,5 +45,6 @@ public interface FilmServiceApi {
     //获取演员信息
     List<ActorVO> getActors(String filmId);
 
+    List<FilmSearchResultVO> getSearchResults(FilmSearchRequstVO filmName);
 
 }
