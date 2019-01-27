@@ -1,0 +1,6 @@
+ftp:
+  host-name: 39.108.95.210
+  port: 21
+  user-name: anonymous
+  password:
+  upload-path: pub/temp/qrcode

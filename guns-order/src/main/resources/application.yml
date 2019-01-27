@@ -41,7 +41,7 @@ spring:
       password: 3DSmart
       filters: log4j,wall,mergeStat
   profiles:
-    active: windows
+    active: anonymous
 
 
 logging:

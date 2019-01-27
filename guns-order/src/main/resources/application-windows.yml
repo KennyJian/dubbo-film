@@ -3,4 +3,3 @@ ftp:
   port: 2100
   user-name: ftp
   password: ksws0123
-  upload-path: /qrcode

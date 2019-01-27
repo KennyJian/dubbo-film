@@ -9,6 +9,7 @@ public class FilmSearchResultVO implements Serializable {
 
     private String filmId;
     private String filmName;
+    private String filmImg;
     private String filmScore;
     private String filmCats;
     private String filmTime;

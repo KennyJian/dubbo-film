@@ -2,10 +2,8 @@ package com.stylefeng.guns.api.user;
 
 import com.stylefeng.guns.api.user.vo.RegisterVO;
 import com.stylefeng.guns.api.user.vo.UserInfoModel;
-import com.stylefeng.guns.api.user.vo.UserModel;
-import org.springframework.web.multipart.MultipartFile;
 
-public interface UserAPI {
+public interface UserAPI{
 
     int login(String username, String password);
 
@@ -17,5 +15,5 @@ public interface UserAPI {
 
     UserInfoModel updateUserInfo(UserInfoModel userInfoModel,int userId);
 
-    boolean uploadHead(MultipartFile file,int userId);
+    boolean uploadHead(byte[] bytes, int userId, String fileName, String prefix);
 }

@@ -20,6 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
 import java.io.IOException;
+import java.io.Serializable;
 
 @RequestMapping("/user/")
 @RestController
@@ -134,14 +135,18 @@ public class UserController {
     @ApiOperation(value = "上传头像")
     @ApiImplicitParam(name = "file", value = "文件", required = true, dataType = "MultipartFile")
     @RequestMapping(value = "/upload",method = RequestMethod.POST)
-        public ResponseVO upload(@RequestParam("file") MultipartFile file) {
-        if (file.isEmpty()) {
+        public ResponseVO upload(MultipartFile headImgFile) throws IOException {
+        if (headImgFile.isEmpty()) {
             return ResponseVO.serviceFail("上传失败，请选择文件");
         }
         String userId= CurrentUser.getCurrentUser();
         if (userId != null && userId.trim().length() > 0) {
             int uuid = Integer.parseInt(userId);
-            boolean isUploadSuccess = userAPI.uploadHead(file, uuid);
+            String fileName = headImgFile.getOriginalFilename();
+            // 获取文件后缀
+            String prefix=fileName.substring(fileName.lastIndexOf("."));
+            byte[] bytes=headImgFile.getBytes();
+            boolean isUploadSuccess = userAPI.uploadHead(bytes,uuid,fileName,prefix);
             if (isUploadSuccess) {
                 return ResponseVO.success("上传成功");
             }

@@ -5,17 +5,16 @@ import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.stylefeng.guns.api.user.UserAPI;
 import com.stylefeng.guns.api.user.vo.RegisterVO;
 import com.stylefeng.guns.api.user.vo.UserInfoModel;
-import com.stylefeng.guns.api.user.vo.UserModel;
 import com.stylefeng.guns.core.util.MD5Util;
+import com.stylefeng.guns.core.util.UUIDUtil;
 import com.stylefeng.guns.rest.common.persistence.dao.KennyUserTMapper;
 import com.stylefeng.guns.rest.common.persistence.model.KennyUserT;
+import com.stylefeng.guns.rest.common.util.FTPUtil;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 
 @Component
 @Service(interfaceClass = UserAPI.class,loadbalance = "roundrobin")
@@ -23,6 +22,9 @@ public class UserServiceImpl implements UserAPI {
 
     @Autowired
     private KennyUserTMapper kennyUserTMapper;
+
+    @Autowired
+    FTPUtil ftpUtil;
 
     @Override
     public int login(String username, String password) {
@@ -93,19 +95,44 @@ public class UserServiceImpl implements UserAPI {
     }
 
     @Override
-    public boolean uploadHead(MultipartFile file,int userId) {
-
-        String fileName = file.getOriginalFilename();
-        String filePath = "D:/ftp/head/";
-        File dest = new File(filePath + fileName);
+    public boolean uploadHead(byte[] bytes, int userId, String fileName, String prefix) {
+        String RealFileName= UUIDUtil.genUuid();
+        OutputStream output = null;
+        BufferedOutputStream bufferedOutput = null;
         try {
-            file.transferTo(dest);
-            KennyUserT kennyUserT=kennyUserTMapper.selectById(userId);
-            kennyUserT.setHeadUrl("/head/"+fileName);
-            kennyUserTMapper.updateById(kennyUserT);
-            return true;
+            File file= (File) File.createTempFile(RealFileName,prefix, new File("D://"));
+            output = new FileOutputStream(file);
+            bufferedOutput = new BufferedOutputStream(output);
+            bufferedOutput.write(bytes);
+            boolean isSuccess=ftpUtil.uploadFile(file.getName(),file);
+            if (file.exists()){
+                file.delete();
+            }
+            if(isSuccess){
+                KennyUserT kennyUserT=kennyUserTMapper.selectById(userId);
+                kennyUserT.setHeadUrl("/head/"+file.getName());
+                kennyUserTMapper.updateById(kennyUserT);
+                return true;
+            }
+            return false;
         } catch (IOException e) {
+            System.err.println("上传失败");
+        } finally {
+            if(null!=bufferedOutput){
+                try {
+                    bufferedOutput.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
 
+            if(null != output){
+                try {
+                    output.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
         }
         return false;
     }
