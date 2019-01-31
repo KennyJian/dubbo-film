@@ -3,9 +3,7 @@ package com.stylefeng.guns.rest.modular.service;
 import com.alibaba.dubbo.config.annotation.Reference;
 import com.alibaba.dubbo.config.annotation.Service;
 import com.alibaba.dubbo.rpc.RpcContext;
-import com.alipay.api.domain.TradeFundBill;
 import com.alipay.api.response.AlipayTradePrecreateResponse;
-import com.alipay.api.response.AlipayTradeQueryResponse;
 import com.stylefeng.guns.api.alipay.AliPayServiceAPI;
 import com.stylefeng.guns.api.alipay.vo.AliPayInfoVO;
 import com.stylefeng.guns.api.alipay.vo.AliPayResultVO;
@@ -24,7 +22,6 @@ import com.stylefeng.guns.rest.modular.alipay.service.AlipayTradeService;
 import com.stylefeng.guns.rest.modular.alipay.service.impl.AlipayMonitorServiceImpl;
 import com.stylefeng.guns.rest.modular.alipay.service.impl.AlipayTradeServiceImpl;
 import com.stylefeng.guns.rest.modular.alipay.service.impl.AlipayTradeWithHBServiceImpl;
-import com.stylefeng.guns.rest.modular.alipay.utils.Utils;
 import com.stylefeng.guns.rest.modular.alipay.utils.ZxingUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +30,9 @@ import org.springframework.stereotype.Component;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 @Slf4j
 @Component
@@ -104,6 +104,22 @@ public class DefaultAlipayServiceImpl implements AliPayServiceAPI {
         return null;
     }
 
+    @Override
+    public void checkOrderStatusInTime(String orderId) {
+
+        ScheduledExecutorService service = Executors.newSingleThreadScheduledExecutor();
+        // 参数：1、任务体 2、首次执行的延时时间
+        //      3、任务执行间隔 4、间隔时间单位
+        //  如果抛出异常则只执行一次
+        service.scheduleAtFixedRate(() -> {
+            getOrderStatus(orderId);
+            System.out.println("查询订单号为:"+orderId+"状态");
+            int[] s = new int[1];
+            System.out.println(s[1]); // 数组越界
+        }, 15, 30, TimeUnit.MINUTES);
+    }
+
+
     public String trade_precreate(String orderId) {
 
         String filePath="";
@@ -144,8 +160,8 @@ public class DefaultAlipayServiceImpl implements AliPayServiceAPI {
         ExtendParams extendParams = new ExtendParams();
 //        extendParams.setSysServiceProviderId("2088100200300400500");
 
-        // 支付超时，定义为120分钟
-        String timeoutExpress = "120m";
+        // 支付超时，定义为15分钟
+        String timeoutExpress = "15m";
 
         // 商品明细列表，需填写购买商品详细信息，
         List<GoodsDetail> goodsDetailList = new ArrayList<GoodsDetail>();

@@ -65,7 +65,7 @@ public class UserController {
 
     @ApiOperation(value = "用户登出")
     @RequestMapping(value = "logout",method = RequestMethod.POST)
-    public ResponseVO logout(String username){
+    public ResponseVO logout(){
         /**
          * 应用:
          *      1.前端存储JWT【7天】 :JWT的刷新

@@ -191,7 +191,7 @@ public class FilmController {
         //判断当前是第几页
 
 
-        return ResponseVO.success(filmVO.getNowPage(),filmVO.getTotalPage(),ImgConst.IMGSRC,filmVO.getFilmInfoList());
+        return ResponseVO.success(filmVO.getNowPage(),filmVO.getTotalPage(),"",filmVO.getFilmInfoList());
     }
 
     @ApiOperation(value = "根据电影Id或电影名查询电影详细信息")
@@ -252,7 +252,7 @@ public class FilmController {
         filmDetail.setInfo04(infoRequestVO);
         filmDetail.setComments(comment);
         filmDetail.setRecommends(recommendVOFuture.get());
-        return ResponseVO.success(ImgConst.IMGSRC,filmDetail);
+        return ResponseVO.success(filmDetail);
     }
 
     @ApiOperation(value = "根据电影名搜索相关电影")

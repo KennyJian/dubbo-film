@@ -19,6 +19,7 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 @Slf4j
@@ -66,6 +67,7 @@ public class OrderController {
             @ApiImplicitParam(name = "soldSeats", value = "座位id", required = true, dataType = "String"),
             @ApiImplicitParam(name = "seatsName", value = "座位名字", required = true, dataType = "String")
     })
+    @Transactional
     @RequestMapping(value = "buyTickets",method = RequestMethod.POST)
     public ResponseVO buyTickets(Integer fieldId,String soldSeats,String seatsName){
 
@@ -74,22 +76,25 @@ public class OrderController {
                 //验证售出的票是否为真
                 boolean isTrue=orderServiceApi.isTrueSeats(fieldId+"",soldSeats);
                 //已经销售的座位里,有没有这些座位
-                boolean isNotSold=orderServiceApi.isNotSoldSeats(fieldId+"",soldSeats);
-                if (isTrue&&isNotSold){
-                    //创建订单信息,注意获取登陆人
-                    String userId= CurrentUser.getCurrentUser();
-                    if (userId==null||userId.trim().length()==0){
-                        return ResponseVO.serviceFail("用户未登录");
+                synchronized (fieldId) {
+                    boolean isNotSold = orderServiceApi.isNotSoldSeats(fieldId + "", soldSeats);
+                    if (isTrue && isNotSold) {
+                        //创建订单信息,注意获取登陆人
+                        String userId = CurrentUser.getCurrentUser();
+                        if (userId == null || userId.trim().length() == 0) {
+                            return ResponseVO.serviceFail("用户未登录");
+                        }
+                        OrderVO orderVO = orderServiceApi.saveOrderInfo(fieldId, soldSeats, seatsName, Integer.parseInt(userId));
+                        aliPayServiceAPI.checkOrderStatusInTime(orderVO.getOrderId());
+                        if (orderVO == null) {
+                            log.error("购票未成功");
+                            return ResponseVO.serviceFail("购票业务异常");
+                        } else {
+                            return ResponseVO.success(orderVO);
+                        }
+                    } else {
+                        return ResponseVO.serviceFail("订单中的座位编号有问题");
                     }
-                    OrderVO orderVO=orderServiceApi.saveOrderInfo(fieldId,soldSeats,seatsName,Integer.parseInt(userId));
-                    if (orderVO==null){
-                        log.error("购票未成功");
-                        return ResponseVO.serviceFail("购票业务异常");
-                    }else {
-                        return ResponseVO.success(orderVO);
-                    }
-                }else {
-                    return ResponseVO.serviceFail("订单中的座位编号有问题");
                 }
             } catch (Exception e) {
                 log.error("购票业务异常",e);
