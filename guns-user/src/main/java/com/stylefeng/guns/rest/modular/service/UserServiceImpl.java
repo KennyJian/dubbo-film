@@ -100,7 +100,8 @@ public class UserServiceImpl implements UserAPI {
         OutputStream output = null;
         BufferedOutputStream bufferedOutput = null;
         try {
-            File file= (File) File.createTempFile(RealFileName,prefix, new File("D://"));
+//            File file= (File) File.createTempFile(RealFileName,prefix, new File("D://"));
+            File file= (File) File.createTempFile(RealFileName,prefix, new File("/home/kenny/eache/head/"));
             output = new FileOutputStream(file);
             bufferedOutput = new BufferedOutputStream(output);
             bufferedOutput.write(bytes);
