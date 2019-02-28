@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -209,6 +210,18 @@ public class DefaultCinemaServiceImpl implements CinemaServiceApi {
     public FilmInfoVO getFilmInfoByFieldId(int fieldId) {
         FilmInfoVO filmInfoVO=cinemaFieldTMapper.getFilmInfoById(fieldId);
         return filmInfoVO;
+    }
+
+    @Override
+    public Integer getCinemaIdByFieldId(Integer fieldId) {
+        return cinemaFieldTMapper.selectById(fieldId).getCinemaId();
+    }
+
+    @Override
+    public String getFieldBeginTime(Integer fieldId) {
+        CinemaFieldT cinemaFieldT=cinemaFieldTMapper.selectById(fieldId);
+        SimpleDateFormat simpleDateFormat=new SimpleDateFormat("yyyy-MM-dd");
+        return simpleDateFormat.format(cinemaFieldT.getBeginData())+" "+cinemaFieldT.getBeginTime();
     }
 
     @Override

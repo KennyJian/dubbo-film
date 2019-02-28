@@ -13,4 +13,5 @@ public class CinemaFieldResponseVO implements Serializable {
     private CinemaInfoVO cinemaInfo;
     private FilmInfoVO filmInfo;
     private HallInfoVO hallInfo;
+    private String beginTime;
 }

@@ -114,14 +114,11 @@ public class CinemaController {
     }
 
     @ApiOperation(value = "获取场次信息,用于选座座位")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "cinemaId", value = "影院Id", required = true, dataType = "Integer"),
-            @ApiImplicitParam(name = "fieldId", value = "场次Id", required = true, dataType = "Integer")
-    })
+    @ApiImplicitParam(name = "fieldId", value = "场次Id", required = true, dataType = "Integer")
     @RequestMapping(value = "getFieldInfo",method = RequestMethod.POST)
-    public ResponseVO getFieldInfo(Integer cinemaId, Integer fieldId){
+    public ResponseVO getFieldInfo(Integer fieldId){
         try{
-            CinemaInfoVO cinemaInfoById = cinemaServiceApi.getCinemaInfoById(cinemaId);
+            CinemaInfoVO cinemaInfoById = cinemaServiceApi.getCinemaInfoById(cinemaServiceApi.getCinemaIdByFieldId(fieldId));
             FilmInfoVO filmInfoByFieldId = cinemaServiceApi.getFilmInfoByFieldId(fieldId);
             HallInfoVO filmFieldInfo = cinemaServiceApi.getFilmFieldInfo(fieldId);
 
@@ -131,6 +128,7 @@ public class CinemaController {
             cinemaFieldResponseVO.setCinemaInfo(cinemaInfoById);
             cinemaFieldResponseVO.setFilmInfo(filmInfoByFieldId);
             cinemaFieldResponseVO.setHallInfo(filmFieldInfo);
+            cinemaFieldResponseVO.setBeginTime(cinemaServiceApi.getFieldBeginTime(fieldId));
 
             return ResponseVO.success(ImgConst.IMGSRC,cinemaFieldResponseVO);
         }catch (Exception e){
