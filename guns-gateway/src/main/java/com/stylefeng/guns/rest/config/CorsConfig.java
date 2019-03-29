@@ -18,9 +18,10 @@ public class CorsConfig {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**")
-                        .allowedOrigins("*")
+                        .allowedOrigins("http://localhost:8080")  //客户端地址
                         .allowCredentials(true)
                         .allowedMethods("GET", "POST", "DELETE", "PUT","PATCH")
+                        .allowedHeaders("*")
                         .maxAge(3600);
             }
         };
