@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.stylefeng.guns.rest.common.persistence.dao.OrderOrderTMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.stylefeng.guns.rest.common.persistence.model.OrderOrderT">
+        <id column="UUID" property="uuid" />
+        <result column="cinema_id" property="cinemaId" />
+        <result column="field_id" property="fieldId" />
+        <result column="film_id" property="filmId" />
+        <result column="seats_ids" property="seatsIds" />
+        <result column="seats_name" property="seatsName" />
+        <result column="film_price" property="filmPrice" />
+        <result column="order_price" property="orderPrice" />
+        <result column="order_time" property="orderTime" />
+        <result column="order_user" property="orderUser" />
+        <result column="order_status" property="orderStatus" />
+    </resultMap>
+
+    <select id="getOrderInfoById" parameterType="java.lang.String" resultType="com.stylefeng.guns.api.order.vo.OrderVO">
+    select
+         o.UUID as orderId,
+         h.film_name as filmName,
+         (case f.begin_data
+         when substr(now(),1,10) then CONCAT('今天',DATE_FORMAT(f.begin_data,'%m月%d日'),'',f.begin_time)
+         when substr(date_add(now(),interval 1 day),1,10) then CONCAT('明天',DATE_FORMAT(f.begin_data,'%m月%d日'),'',f.begin_time)
+         when substr(date_add(now(),interval 2 day),1,10) then CONCAT('后天',DATE_FORMAT(f.begin_data,'%m月%d日'),'',f.begin_time)
+         else  CONCAT(DATE_FORMAT(f.begin_data,'%m月%d日'),'',f.begin_time) end) as fieldTime,
+         c.cinema_name as cinemaName,
+         o.seats_name as seatsName,
+         o.order_price as orderPrice,
+         unix_timestamp(o.order_time) as orderTimestamp,
+        (case o.order_status
+        when '0' then '待支付'
+        when '1' then '已支付'
+        else  '已关闭' end) as orderStatus
+     from
+         order_order_t o,
+         cinema_field_t f,
+         cinema_hall_film_info_t h,
+         cinema_cinema_t c
+     where o.cinema_id=c.UUID
+     and o.field_id=f.UUID
+     and o.film_id=h.film_id
+     and o.UUID=#{orderId}
+    </select>
+
+    <select id="getOrderInfoByUserId" parameterType="java.lang.Integer" resultType="com.stylefeng.guns.api.order.vo.OrderVO">
+    select
+         o.UUID as orderId,
+         h.film_name as filmName,
+         h.img_address as filmImgAddress,
+         f.hall_name as filmHallName,
+         CONCAT(DATE_FORMAT(o.order_time,'%y年%m月%d日'),'',f.begin_time) as fieldTime,
+         c.cinema_name as cinemaName,
+         o.seats_name as seatsName,
+         o.order_price as orderPrice,
+         unix_timestamp(o.order_time) as orderTimestamp,
+         (case o.order_status
+         when '0' then '待支付'
+         when '1' then '已支付'
+         else  '已关闭' end) as orderStatus
+     from
+         order_order_t o,
+         cinema_field_t f,
+         cinema_hall_film_info_t h,
+         cinema_cinema_t c
+     where o.cinema_id=c.UUID
+     and o.field_id=f.UUID
+     and o.film_id=h.film_id
+     and o.order_user=#{userId}
+    </select>
+
+    <select id="getSoldSeatsByFieldId" parameterType="java.lang.Integer" resultType="java.lang.String">
+        select group_concat(seats_ids) from order_order_t where field_id=#{fieldId} and order_status in (0,1)
+    </select>
+
+    <insert id="addOrder" parameterType="com.stylefeng.guns.rest.common.persistence.model.OrderOrderT">
+        INSERT INTO order_order_t(UUID,cinema_id,field_id,film_id,seats_ids,seats_name,film_price,order_price,order_user) values (#{uuid},#{cinemaId},#{fieldId},#{filmId},#{seatsIds},#{seatsName},#{filmPrice},#{orderPrice},#{orderUser})
+    </insert>
+</mapper>

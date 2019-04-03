@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.stylefeng.guns.rest.common.persistence.dao.CinemaFieldTMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.stylefeng.guns.rest.common.persistence.model.CinemaFieldT">
+        <id column="UUID" property="uuid" />
+        <result column="cinema_id" property="cinemaId" />
+        <result column="film_id" property="filmId" />
+        <result column="begin_time" property="beginTime" />
+        <result column="end_time" property="endTime" />
+        <result column="hall_id" property="hallId" />
+        <result column="hall_name" property="hallName" />
+        <result column="price" property="price" />
+    </resultMap>
+
+    <resultMap id="getFilmInfoMap" type="com.stylefeng.guns.api.cinema.vo.FilmInfoVO">
+        <result column="film_id" property="filmId"></result>
+        <result column="film_name" property="filmName"></result>
+        <result column="film_length" property="filmLength"></result>
+        <result column="film_language" property="filmType"></result>
+        <result column="film_cats" property="filmCats"></result>
+        <result column="actors" property="actors"></result>
+        <result column="img_address" property="imgAddress"></result>
+        <collection property="filmFields" ofType="com.stylefeng.guns.api.cinema.vo.FilmFieldVO">
+            <result column="UUID" property="field"></result>
+            <result column="begin_time" property="beginTime"></result>
+            <result column="end_time" property="endTime"></result>
+            <result column="film_language" property="language"></result>
+            <result column="hall_name" property="hallName"></result>
+            <result column="price" property="price"></result>
+            <result column="price" property="price"></result>
+            <result column="begin_data" property="beginDate"></result>
+        </collection>
+    </resultMap>
+    
+    <!--一对多的查询-->
+    <select id="getFilmInfos" parameterType="java.lang.Integer" resultMap="getFilmInfoMap">
+        select
+            info.film_id,
+            info.film_name,
+            info.film_length,
+            info.film_language,
+            info.film_cats,
+            info.actors,
+            info.img_address,
+            f.UUID,
+            f.begin_time,
+            f.end_time,
+            f.hall_name,
+            f.price,
+            f.begin_data
+        from
+            cinema_hall_film_info_t info
+        join
+            cinema_field_t f
+        on
+            f.film_id=info.film_id
+        and
+			concat(f.begin_data,' ',f.begin_time)>=now()
+        and
+            f.cinema_id=#{cinemaId}
+    </select>
+
+    <select id="getHallInfo" parameterType="java.lang.Integer" resultType="com.stylefeng.guns.api.cinema.vo.HallInfoVO">
+        select
+            f.UUID as hallFieldId,
+            f.hall_name as hallName,
+            f.price as price,
+            hall.seat_address as seatFile
+        from
+            cinema_hall_dict_t hall,
+            cinema_field_t f
+        where
+            f.hall_id=hall.UUID
+        and
+            f.UUID=#{fieldId}
+    </select>
+
+    <select id="getFilmInfoById" parameterType="java.lang.Integer" resultType="com.stylefeng.guns.api.cinema.vo.FilmInfoVO">
+        select
+            f.film_id as filmId,
+            info.film_name as filmName,
+            info.film_length as filmLength,
+            info.film_language as filmType,
+            info.film_cats as filmCats,
+            info.actors as actors,
+            info.img_address as imgAddress
+        from
+            cinema_field_t f,
+            cinema_hall_film_info_t info
+        where
+            f.film_id=info.film_id
+        and
+            f.UUID=#{fieldId}
+    </select>
+
+    <select id="getSeatsByFieldId" parameterType="java.lang.String" resultType="java.lang.String">
+        select
+          seat_address
+        from
+          cinema_field_t f,cinema_hall_dict_t d
+        where
+          f.hall_id=d.UUID
+        and
+          f.UUID=#{fieldId}
+    </select>
+</mapper>

@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.stylefeng.guns.rest.common.persistence.dao.KennyFilmTMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.stylefeng.guns.rest.common.persistence.model.KennyFilmT">
+        <id column="UUID" property="uuid" />
+        <result column="film_name" property="filmName" />
+        <result column="film_type" property="filmType" />
+        <result column="img_address" property="imgAddress" />
+        <result column="film_score" property="filmScore" />
+        <result column="film_preSaleNum" property="filmPresalenum" />
+        <result column="film_box_office" property="filmBoxOffice" />
+        <result column="film_source" property="filmSource" />
+        <result column="film_cats" property="filmCats" />
+        <result column="film_area" property="filmArea" />
+        <result column="film_date" property="filmDate" />
+        <result column="film_time" property="filmTime" />
+        <result column="film_status" property="filmStatus" />
+    </resultMap>
+
+    <select id="getFilmDetailByName" parameterType="java.lang.String" resultType="com.stylefeng.guns.api.film.vo.FilmDetailVO">
+        SELECT
+            film.UUID as filmId,
+            film.film_name as filmName,
+            info.film_en_name as filmEnName,
+            film.img_address as imgAddress,
+            info.film_score as score,
+            info.film_score_num as scoreNum,
+            film.film_box_office as totalBox,
+            (select group_concat(show_name SEPARATOR ',') from kenny_cat_dict_t t where FIND_IN_SET(t.uuid,(select replace(trim(BOTH '#' FROM film_cats),'#',',') from kenny_film_t t where t.film_name like #{filmName} limit 1))) as info01,
+            concat((select show_name from kenny_source_dict_t t where t.uuid=film.film_source),'/',info.film_length,'分钟')as info02,
+            concat(film.film_time,(select show_name from kenny_source_dict_t t where t.uuid=film.film_area),'上映') as info03
+        FROM  kenny_film_t film,kenny_film_info_t info
+        WHERE film.UUID=info.film_id
+        AND film.film_name like #{filmName}
+        limit 1
+    </select>
+
+    <select id="getFilmDetailById" parameterType="java.lang.String" resultType="com.stylefeng.guns.api.film.vo.FilmDetailVO">
+        SELECT
+            film.UUID as filmId,
+            film.film_name as filmName,
+            info.film_en_name as filmEnName,
+            film.img_address as imgAddress,
+            info.film_score as score,
+            info.film_score_num as scoreNum,
+            film.film_box_office as totalBox,
+            (select group_concat(show_name SEPARATOR ',') from kenny_cat_dict_t t where FIND_IN_SET(t.uuid,(select replace(trim(BOTH '#' FROM film_cats),'#',',') from kenny_film_t t where t.UUID=#{uuid}))) as info01,
+            concat((select show_name from kenny_source_dict_t t where t.uuid=film.film_source),'/',info.film_length,'分钟')as info02,
+            concat(film.film_time,(select show_name from kenny_source_dict_t t where t.uuid=film.film_area),'上映') as info03
+        FROM  kenny_film_t film,kenny_film_info_t info
+        WHERE film.UUID=info.film_id
+        AND film.UUID=#{uuid}
+    </select>
+
+    <select id="searchResult" parameterType="java.lang.String" resultType="com.stylefeng.guns.api.film.vo.FilmSearchResultVO">
+        select
+        distinct
+            a.UUID as filmId,
+            a.film_name as filmName,
+            a.img_address as filmImg,
+            a.film_score as filmScore,
+            (select group_concat(show_name SEPARATOR ',') from kenny_cat_dict_t t where FIND_IN_SET(t.uuid,(select replace(trim(BOTH '#' FROM film_cats),'#',',') from kenny_film_t t where t.UUID=a.UUID))) as filmCats,
+            concat(a.film_time,(select show_name from kenny_source_dict_t t where t.uuid=a.film_area),'上映') as filmTime
+        from
+            kenny_film_t a,kenny_film_info_t b
+        where a.film_name like #{filmName}
+        order by
+	        filmTime desc
+    </select>
+</mapper>
