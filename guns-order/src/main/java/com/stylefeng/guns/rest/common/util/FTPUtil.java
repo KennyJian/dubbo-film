@@ -7,11 +7,10 @@ import org.apache.commons.net.ftp.FTPFile;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.util.ResourceUtils;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 
 @Slf4j
 @Data
@@ -47,7 +46,11 @@ public class FTPUtil {
             for (FTPFile ftpFile:ftpFiles){
                 System.out.println(ftpFile.getName());
             }
-            bufferedReader=new BufferedReader(new InputStreamReader(ftpClient.retrieveFileStream("pub/temp/"+fileAddress)));
+//            bufferedReader=new BufferedReader(new InputStreamReader(ftpClient.retrieveFileStream("pub/temp/"+fileAddress)));
+            //linux写死
+            bufferedReader=new BufferedReader(new InputStreamReader(new FileInputStream(new File("/home/kenny/eache/cgs.json"))));
+            //windows写死
+//            bufferedReader=new BufferedReader(new InputStreamReader(new FileInputStream(new File("E:\\cgs.json"))));
             StringBuffer stringBuffer=new StringBuffer();
             while (true){
                 String lineStr=bufferedReader.readLine();
@@ -59,9 +62,12 @@ public class FTPUtil {
             ftpClient.logout();
             return stringBuffer.toString();
         }catch (Exception e){
-             log.error("获取文件信息失败",e);
+             log.error("获取FTP文件信息失败",e);
         }finally {
-//            bufferedReader.close();
+            if (bufferedReader!=null){
+                bufferedReader.close();  //当时是注释的
+            }
+//            return stringBuffer.toString();
         }
         return null;
     }
