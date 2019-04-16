@@ -88,12 +88,12 @@ public class DefaultAlipayServiceImpl implements AliPayServiceAPI {
     }
 
     @Override
-    public AliPayResultVO getOrderStatus(String orderId) {
+    public AliPayResultVO getOrderStatus(String orderId,boolean isTimeOut) {
         //看看是否有当前登陆人
         String userId= RpcContext.getContext().getAttachment("userId");
         log.info("DefaultAlipayServiceImpl - getPrderStatus-userId="+userId);
         //获取订单支付状态
-        boolean isSuccess=trade_query(orderId);
+        boolean isSuccess=trade_query(orderId,isTimeOut);
         if(isSuccess){
             AliPayResultVO aliPayResultVO=new AliPayResultVO();
             aliPayResultVO.setOrderId(orderId);
@@ -112,7 +112,7 @@ public class DefaultAlipayServiceImpl implements AliPayServiceAPI {
         //      3、任务执行间隔 4、间隔时间单位
         //  如果抛出异常则只执行一次
         service.scheduleAtFixedRate(() -> {
-            getOrderStatus(orderId);
+            getOrderStatus(orderId,true);
             System.out.println("查询订单号为:"+orderId+"状态");
             int[] s = new int[1];
             System.out.println(s[1]); // 数组越界
@@ -221,7 +221,7 @@ public class DefaultAlipayServiceImpl implements AliPayServiceAPI {
         return filePath;
     }
 
-    public boolean trade_query(String orderId) {
+    public boolean trade_query(String orderId,boolean isTimeOut) {
         boolean isSuccess=false;
         // (必填) 商户订单号，通过此商户订单号查询当面付的交易状态
         String outTradeNo = orderId;
@@ -242,7 +242,7 @@ public class DefaultAlipayServiceImpl implements AliPayServiceAPI {
 
             case FAILED:
                 log.error("查询返回该订单支付失败或被关闭!!!");
-                orderServiceApi.payFail(orderId);
+                orderServiceApi.payFail(orderId,isTimeOut);
                 break;
 
             case UNKNOWN:

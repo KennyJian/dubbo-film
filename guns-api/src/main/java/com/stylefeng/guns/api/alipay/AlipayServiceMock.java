@@ -13,11 +13,11 @@ public class AlipayServiceMock implements AliPayServiceAPI {
     }
 
     @Override
-    public AliPayResultVO getOrderStatus(String orderId) {
+    public AliPayResultVO getOrderStatus(String orderId,boolean isTimeOut) {
         AliPayResultVO aliPayResultVO=new AliPayResultVO();
         aliPayResultVO.setOrderId(orderId);
         aliPayResultVO.setOrderStatus(0);
-        aliPayResultVO.setOrderMsg("尚未支付成功");
+        aliPayResultVO.setOrderMsg("获取订单结果失败,请稍后重试");
         return aliPayResultVO;
     }
 

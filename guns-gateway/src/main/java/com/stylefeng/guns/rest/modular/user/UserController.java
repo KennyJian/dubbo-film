@@ -110,7 +110,7 @@ public class UserController {
     @RequestMapping(value = "updateUserInfo",method = RequestMethod.POST)
     public ResponseVO updateUserInfo(@Valid UserInfoModel userInfoModel, BindingResult bindingResult){
         if(bindingResult.hasErrors()){
-            return ResponseVO.serviceFail("信息格式不正确");
+            return ResponseVO.serviceFail("信息格式不正确,请留意邮箱或手机号是否填写正确");
         }else {
             //获取当前登陆用户
             String userId = CurrentUser.getCurrentUser();

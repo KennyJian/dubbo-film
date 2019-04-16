@@ -22,5 +22,5 @@ public interface OrderServiceApi {
 
     boolean paySuccess(String orderId);
 
-    boolean payFail(String orderId);
+    boolean payFail(String orderId,boolean isTimeOut);
 }

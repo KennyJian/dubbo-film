@@ -69,6 +69,7 @@
      and o.field_id=f.UUID
      and o.film_id=h.film_id
      and o.order_user=#{userId}
+     order by orderTimestamp desc
     </select>
 
     <select id="getSoldSeatsByFieldId" parameterType="java.lang.Integer" resultType="java.lang.String">

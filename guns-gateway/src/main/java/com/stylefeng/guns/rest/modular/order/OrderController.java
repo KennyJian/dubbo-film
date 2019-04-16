@@ -121,7 +121,7 @@ public class OrderController {
         Page<OrderVO> page=new Page<>(nowPage,pageSize);
         if (userId!=null&&userId.trim().length()>0){
             Page<OrderVO> result = orderServiceApi.getOrderByUserId(Integer.parseInt(userId), page);
-            return ResponseVO.success(nowPage,(int)result.getPages(),"",result.getRecords());
+            return ResponseVO.success(nowPage, (int) Math.ceil(result.getTotal()/result.getSize()),"",result.getRecords());
         }else {
             return ResponseVO.serviceFail("用户未登录");
         }
@@ -157,7 +157,7 @@ public class OrderController {
         if (tryNums>=4){
             return ResponseVO.serviceFail("订单支付失败,请稍后重试");
         }
-        AliPayResultVO aliPayResultVO=aliPayServiceAPI.getOrderStatus(orderId);
+        AliPayResultVO aliPayResultVO=aliPayServiceAPI.getOrderStatus(orderId,false);
         if (aliPayResultVO==null|| ToolUtil.isEmpty(aliPayResultVO.getOrderId())){
             AliPayResultVO serviceFailVO=new AliPayResultVO();
             serviceFailVO.setOrderId(orderId);

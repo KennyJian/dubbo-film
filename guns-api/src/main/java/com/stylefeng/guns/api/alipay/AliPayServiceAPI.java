@@ -7,7 +7,7 @@ public interface AliPayServiceAPI {
 
     AliPayInfoVO getQRCode(String orderId);
 
-    AliPayResultVO getOrderStatus(String orderId);
+    AliPayResultVO getOrderStatus(String orderId,boolean isTimeOut);
 
     //定时查询订单状态
     void checkOrderStatusInTime(String orderId);

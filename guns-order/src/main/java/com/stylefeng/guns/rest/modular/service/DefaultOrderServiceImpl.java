@@ -203,11 +203,12 @@ public class DefaultOrderServiceImpl implements OrderServiceApi {
     }
 
     @Override
-    public boolean payFail(String orderId) {
+    public boolean payFail(String orderId,boolean isTimeOut) {
         OrderOrderT orderOrderT=new OrderOrderT();
         orderOrderT.setUuid(orderId);
-        orderOrderT.setOrderStatus(2);
-
+        if(isTimeOut){
+          orderOrderT.setOrderStatus(2);
+        }
         Integer resultCount = orderOrderTMapper.updateById(orderOrderT);
         if(resultCount>=1){
             return true;
