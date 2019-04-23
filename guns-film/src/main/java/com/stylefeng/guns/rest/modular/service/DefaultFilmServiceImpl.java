@@ -119,7 +119,7 @@ public class DefaultFilmServiceImpl implements FilmServiceApi {
             filmVO.setFilmNum(filmInfos.size());
             //需要总页数totalCounts/nums ->0+1=1
             int totalCounts=kennyFilmTMapper.selectCount(kennyFilmTEntityWrapper);
-            int totalPages=(totalCounts/nums)+1;
+            int totalPages=(int) Math.ceil((double) totalCounts/(double)nums);
             filmVO.setFilmInfoList(filmInfos);
             filmVO.setTotalPage(totalPages);
             filmVO.setNowPage(nowPage);
@@ -176,7 +176,7 @@ public class DefaultFilmServiceImpl implements FilmServiceApi {
             filmVO.setFilmNum(filmInfos.size());
             //需要总页数totalCounts/nums ->0+1=1
             int totalCounts=kennyFilmTMapper.selectCount(kennyFilmTEntityWrapper);
-            int totalPages=(totalCounts/nums)+1;
+            int totalPages=(int) Math.ceil((double) totalCounts/(double)nums);
             filmVO.setFilmInfoList(filmInfos);
             filmVO.setTotalPage(totalPages);
             filmVO.setNowPage(nowPage);
@@ -226,7 +226,7 @@ public class DefaultFilmServiceImpl implements FilmServiceApi {
         filmVO.setFilmNum(filmInfos.size());
         //需要总页数totalCounts/nums ->0+1=1
         int totalCounts=kennyFilmTMapper.selectCount(kennyFilmTEntityWrapper);
-        int totalPages=(totalCounts/nums)+1;
+        int totalPages=(int) Math.ceil((double) totalCounts/(double)nums);
         filmVO.setFilmInfoList(filmInfos);
         filmVO.setTotalPage(totalPages);
         filmVO.setNowPage(nowPage);

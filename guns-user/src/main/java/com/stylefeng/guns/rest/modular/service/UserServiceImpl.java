@@ -13,6 +13,7 @@ import com.stylefeng.guns.rest.common.util.FTPUtil;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.*;
 
@@ -42,6 +43,7 @@ public class UserServiceImpl implements UserAPI {
     }
 
     @Override
+    @Transactional
     public boolean register(RegisterVO registerVO) {
 
         //判断该用户是否被注册过
@@ -55,6 +57,7 @@ public class UserServiceImpl implements UserAPI {
         //数据加密
         String md5Password= MD5Util.encrypt(registerVO.getUserPwd());
         kennyUserT.setUserPwd(md5Password);
+        kennyUserT.setHeadUrl("/head/default.png");
         //将数据实体存入数据库
         Integer insertCount=kennyUserTMapper.insert(kennyUserT);
         if (insertCount>0){

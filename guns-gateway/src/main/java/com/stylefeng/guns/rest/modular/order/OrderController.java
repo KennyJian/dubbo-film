@@ -121,7 +121,7 @@ public class OrderController {
         Page<OrderVO> page=new Page<>(nowPage,pageSize);
         if (userId!=null&&userId.trim().length()>0){
             Page<OrderVO> result = orderServiceApi.getOrderByUserId(Integer.parseInt(userId), page);
-            return ResponseVO.success(nowPage, (int) Math.ceil(result.getTotal()/result.getSize()),"",result.getRecords());
+            return ResponseVO.success(nowPage,(int) Math.ceil((double) result.getTotal()/(double)pageSize),"",result.getRecords());
         }else {
             return ResponseVO.serviceFail("用户未登录");
         }

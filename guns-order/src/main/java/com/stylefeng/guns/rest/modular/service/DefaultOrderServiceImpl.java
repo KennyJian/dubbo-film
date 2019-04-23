@@ -206,9 +206,10 @@ public class DefaultOrderServiceImpl implements OrderServiceApi {
     public boolean payFail(String orderId,boolean isTimeOut) {
         OrderOrderT orderOrderT=new OrderOrderT();
         orderOrderT.setUuid(orderId);
-        if(isTimeOut){
-          orderOrderT.setOrderStatus(2);
+        if(!isTimeOut){
+          return false;
         }
+        orderOrderT.setOrderStatus(2);
         Integer resultCount = orderOrderTMapper.updateById(orderOrderT);
         if(resultCount>=1){
             return true;

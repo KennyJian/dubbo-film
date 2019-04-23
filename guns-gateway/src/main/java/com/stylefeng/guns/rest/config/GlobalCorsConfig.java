@@ -2,9 +2,12 @@ package com.stylefeng.guns.rest.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
+
+import java.util.List;
 
 @Configuration
 public class GlobalCorsConfig {
@@ -14,6 +17,7 @@ public class GlobalCorsConfig {
         corsConfiguration.addAllowedOrigin("*"); // 允许任何域名使用
         corsConfiguration.addAllowedHeader("*"); // 允许任何头
         corsConfiguration.addAllowedMethod("*"); // 允许任何方法（post、get等）
+        corsConfiguration.addAllowedHeader("authorization");
         return corsConfiguration;
     }
 
