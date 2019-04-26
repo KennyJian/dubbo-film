@@ -11,7 +11,7 @@ jwt:
   ignore-url: /user/register,/user/check,/film/getIndex,/film/getConditionList,/film/getFilms,/film/films,/film/searchFilm,/cinema/getCinemas,/cinema/getCondition,/cinema/getFields,/cinema/getFieldInfo #忽略列表
 
 server:
-  port: 8080 #项目端口
+  port: 9095 #项目端口
 
 mybatis-plus:
   mapper-locations: classpath*:com/stylefeng/guns/rest/**/mapping/*.xml

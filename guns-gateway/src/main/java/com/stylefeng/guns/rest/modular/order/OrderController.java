@@ -48,19 +48,19 @@ public class OrderController {
      * 线程池隔离
      * 线程切换 (取不到用户信息)
      */
-    @HystrixCommand(fallbackMethod="error",commandProperties={
-            @HystrixProperty(name="execution.isolation.strategy",value="THREAD"),
-            @HystrixProperty(name="execution.isolation.thread.timeoutInMilliseconds",value="4000"),
-            @HystrixProperty(name="circuitBreaker.requestVolumeThreshold",value="10"),
-            @HystrixProperty(name="circuitBreaker.errorThresholdPercentage",value="50")},
-            threadPoolProperties={
-                    @HystrixProperty(name="coreSize",value="1"),
-                    @HystrixProperty(name="maxQueueSize",value="10"),
-                    @HystrixProperty(name="keepAliveTimeMinutes",value="1000"),
-                    @HystrixProperty(name="queueSizeRejectionThreshold",value="8"),
-                    @HystrixProperty(name="metrics.rollingStats.numBuckets",value="12"),
-                    @HystrixProperty(name="metrics.rollingStats.timeInMilliseconds",value="1500")
-    })
+//    @HystrixCommand(fallbackMethod="error",commandProperties={
+//            @HystrixProperty(name="execution.isolation.strategy",value="THREAD"),
+//            @HystrixProperty(name="execution.isolation.thread.timeoutInMilliseconds",value="4000"),
+//            @HystrixProperty(name="circuitBreaker.requestVolumeThreshold",value="10"),
+//            @HystrixProperty(name="circuitBreaker.errorThresholdPercentage",value="50")},
+//            threadPoolProperties={
+//                    @HystrixProperty(name="coreSize",value="1"),
+//                    @HystrixProperty(name="maxQueueSize",value="10"),
+//                    @HystrixProperty(name="keepAliveTimeMinutes",value="1000"),
+//                    @HystrixProperty(name="queueSizeRejectionThreshold",value="8"),
+//                    @HystrixProperty(name="metrics.rollingStats.numBuckets",value="12"),
+//                    @HystrixProperty(name="metrics.rollingStats.timeInMilliseconds",value="1500")
+//    })
     @ApiOperation(value = "购买电影票")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "fieldId", value = "影片名称或Id", required = true, dataType = "Integer"),

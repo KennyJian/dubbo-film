@@ -191,10 +191,10 @@ public class DefaultAlipayServiceImpl implements AliPayServiceAPI {
                 AlipayTradePrecreateResponse response = result.getResponse();
 
                 // 需要修改为运行机器上的路径  windows和linux
-//                filePath = String.format("E:/code/毕设/qrcode/qr-%s.png",
-//                        response.getOutTradeNo());
-                filePath = String.format("/home/kenny/eache/qrcode/qr-%s.png",
+                filePath = String.format("E:/code/毕设/qrcode/qr-%s.png",
                         response.getOutTradeNo());
+//                filePath = String.format("/home/kenny/eache/qrcode/qr-%s.png",
+//                        response.getOutTradeNo());
                 String fileName=String.format("qr-%s.png",response.getOutTradeNo());
                 log.info("filePath:" + filePath);
                 File qrCodeImg=ZxingUtils.getQRCodeImge(response.getQrCode(), 256, filePath);

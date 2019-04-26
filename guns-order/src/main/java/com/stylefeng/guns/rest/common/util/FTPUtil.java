@@ -47,10 +47,10 @@ public class FTPUtil {
                 System.out.println(ftpFile.getName());
             }
 //            bufferedReader=new BufferedReader(new InputStreamReader(ftpClient.retrieveFileStream("pub/temp/"+fileAddress)));
-            //linux写死
-            bufferedReader=new BufferedReader(new InputStreamReader(new FileInputStream(new File("/home/kenny/eache/cgs.json"))));
+//            linux写死
+//            bufferedReader=new BufferedReader(new InputStreamReader(new FileInputStream(new File("/home/kenny/eache/cgs.json"))));
             //windows写死
-//            bufferedReader=new BufferedReader(new InputStreamReader(new FileInputStream(new File("E:\\cgs.json"))));
+            bufferedReader=new BufferedReader(new InputStreamReader(new FileInputStream(new File("E:\\cgs.json"))));
             StringBuffer stringBuffer=new StringBuffer();
             while (true){
                 String lineStr=bufferedReader.readLine();

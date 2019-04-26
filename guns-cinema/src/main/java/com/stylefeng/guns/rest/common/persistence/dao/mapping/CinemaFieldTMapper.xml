@@ -60,6 +60,7 @@
 			concat(f.begin_data,' ',f.begin_time)>=now()
         and
             f.cinema_id=#{cinemaId}
+        order by f.begin_data,f.begin_time asc
     </select>
 
     <select id="getHallInfo" parameterType="java.lang.Integer" resultType="com.stylefeng.guns.api.cinema.vo.HallInfoVO">
