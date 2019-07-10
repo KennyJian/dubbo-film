@@ -116,7 +116,7 @@ public class DefaultAlipayServiceImpl implements AliPayServiceAPI {
             System.out.println("查询订单号为:"+orderId+"状态");
             int[] s = new int[1];
             System.out.println(s[1]); // 数组越界
-        }, 15, 30, TimeUnit.MINUTES);
+        }, 2, 30, TimeUnit.MINUTES);
     }
 
 

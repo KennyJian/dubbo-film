@@ -132,7 +132,7 @@ public class UserController {
     @ApiOperation(value = "上传头像")
     @ApiImplicitParam(name = "file", value = "文件", required = true, dataType = "MultipartFile")
     @RequestMapping(value = "/upload",method = RequestMethod.POST)
-        public ResponseVO upload(MultipartFile headImgFile) throws IOException {
+            public ResponseVO upload(MultipartFile headImgFile) throws IOException {
         if (headImgFile.isEmpty()) {
             return ResponseVO.serviceFail("上传失败，请选择文件");
         }
